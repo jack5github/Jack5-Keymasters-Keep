@@ -310,8 +310,8 @@ class EmbrGame(Game):
             "Wastemates Pants",
         ]
 
-    @cached_property
-    def bonus_objectives_base(self) -> list[str]:
+    @staticmethod
+    def bonus_objectives_base() -> list[str]:
         return [
             "Abandon a job",
             "Allow a client to die",
@@ -343,8 +343,8 @@ class EmbrGame(Game):
             "Use an EMP Grenade on an electrical outlet",
         ]
 
-    @cached_property
-    def bonus_objectives_difficult(self) -> list[str]:
+    @staticmethod
+    def bonus_objectives_difficult() -> list[str]:
         return [
             "Be pushed by a giant fan",
             "Collect a total of 20 security access keys",
@@ -499,14 +499,14 @@ class EmbrGame(Game):
             ),
             GameObjectiveTemplate(
                 label="BONUS",
-                data={"BONUS": (lambda: self.bonus_objectives_base, 1)},
+                data={"BONUS": (self.bonus_objectives_base, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=int(weights["bonus"] * factor * 0.8),
             ),
             GameObjectiveTemplate(
                 label="BONUS",
-                data={"BONUS": (lambda: self.bonus_objectives_difficult, 1)},
+                data={"BONUS": (self.bonus_objectives_difficult, 1)},
                 is_time_consuming=False,
                 is_difficult=True,
                 weight=int(weights["bonus"] * factor * 0.2),
