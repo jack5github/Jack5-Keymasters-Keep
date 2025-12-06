@@ -11,7 +11,7 @@ from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
 
 class EmbrWeights(OptionCounter):
     """
-    The weights to use for Embr objective types. Note that "embrgigs" and "goals" are classified as difficult and time consuming, and will not appear if difficult or time consuming objectives are disabled.
+    The weights to use for Embr objective types. Note that "embrgigs", "goals" and one-fifth of "bonus" are classified as difficult and time consuming, and will not appear if difficult or time consuming objectives are disabled.
     """
 
     display_name: str = "Embr Weights"

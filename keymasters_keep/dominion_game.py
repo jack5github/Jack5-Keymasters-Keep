@@ -11,7 +11,7 @@ from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
 
 class DominionWeights(OptionCounter):
     """
-    The weights to use for Dominion objective types. Defaults to only objectives that can be completed in real life. If playing the 2021 version of Dominion by Temple Gates Games, it is recommended to use the following weights:
+    The weights to use for Dominion objective types. Note that "win_with_card" and half of "win_against_ai" are classified as difficult, and will not appear if difficult objectives are disabled. Defaults to only objectives that can be completed in real life. If playing the 2021 version of Dominion by Temple Gates Games, it is recommended to use the following weights:
 
     ```yaml
     setup_with_cards: 1
