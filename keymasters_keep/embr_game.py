@@ -335,7 +335,7 @@ class EmbrGame(Game):
             "Open a safe",
             "Play Secret HOSR with 3 other players",
             "Put something in your Salvage Zone",
-            "Rescue a player with no health",
+            "Rescue a player that has no health",
             "Slide down a Slippery Slide",
             "Stand still and watch a raging fire",
             "Use a Cheap Metal Box",

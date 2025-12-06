@@ -87,15 +87,16 @@ class PortalGame(Game):
 
     def complete_chamber_objectives(self) -> list[str]:
         return [
-            f"Complete Test Chamber {index:02d} starting from Chapter {chapter}"
+            f"Test Chamber {index:02d} starting from Chapter {chapter}"
             for index, (chapter, _) in enumerate(self.chapters_and_cameras)
         ]
 
     def detach_camera_objectives(self) -> list[str]:
-        return [
-            f"{cameras} cameras on Test Chamber {index:02d}"
-            for index, (_, cameras) in enumerate(self.chapters_and_cameras)
-        ]
+        objectives: list[str] = []
+        for index, (_, cameras) in enumerate(self.chapters_and_cameras):
+            if cameras > 0:
+                objectives.append(f"{cameras} cameras from Test Chamber {index:02d}")
+        return objectives
 
     @staticmethod
     def escape_locations() -> list[str]:
@@ -113,7 +114,7 @@ class PortalGame(Game):
             "3 turrets behind doors",
             "friendly turret",
             "rocket turret",
-            "breakable glass pipe",
+            "glass pipe breakable by rocket",
             "giant room with turrets behind doors"
             "top of giant room with turrets behind doors",
             "long catwalk",

@@ -229,6 +229,7 @@ class GoofyGorillasGame(Game):
             "Manually taunt in Prop Hunt and have no-one notice",
             "Play bowling on Original",
             "Score a basketball hoop on Original",
+            "Score a soccer goal on Original",
             "Score a soccer goal on Refurbished",
             "See yourself on a TV screen",
             "Slide into the ball pit on Original",
