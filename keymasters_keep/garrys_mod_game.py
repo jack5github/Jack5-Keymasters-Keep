@@ -6,6 +6,7 @@ A Keymaster's Keep implementation of Garry's Mod, created by Jack5. The followin
 - Spawn specific props/NPCs
 - Pose NPCs on/with specific maps/props
 - Kill NPCs with specific weapons
+- Bonus objectives
 
 As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `garrys_mod_weights` YAML option.
 

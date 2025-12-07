@@ -5,6 +5,7 @@ A Keymaster's Keep implementation of Goofy Gorillas, created by Jack5. The follo
 - Play gamemodes with specific settings
 - Get kills with items
 - Beat time trial records on specific maps
+- Bonus objectives
 
 As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `goofy_gorillas_weights` YAML option.
 """

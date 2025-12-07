@@ -6,6 +6,7 @@ A Keymaster's Keep implementation of Embr, created by Jack5. The following objec
 - Find all cash on specific neighbourhoods
 - Beat missions with specific loadouts/gear
 - Complete EmbrGigs and goals *(difficult and time consuming)*
+- Bonus objectives
 
 (The *Wayside Way* neighbourhood and districts other than *Bedbugstuy* are considered difficult.)
 
