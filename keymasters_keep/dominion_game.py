@@ -1,3 +1,17 @@
+"""
+A Keymaster's Keep implementation of Dominion, created by Jack5. The following objective types are included:
+
+- Set up and play games with specific cards
+- Play specific cards
+- Win with specific cards *(difficult)*
+- Win against AIs *(video game)*
+- Bonus objectives *(video game)*
+
+As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `dominion_weights` YAML option.
+
+This implementation can be used both for the board game and Temple Gates Games video game version of Dominion. If playing the video game, adjustment of the weights is recommended (see the docstring of `DominionWeights` for more details). All expansions up to Rising Sun are included.
+"""
+
 from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
@@ -77,6 +91,12 @@ class DominionArchipelagoOptions:
 
 
 class DominionGame(Game):
+    """
+    Dominion is the game that started a new genre: deckbuilding. With more than a dozen expansions currently available, players will always be able to find new challenges. There are millions of different combinations that can be played just with the base game alone. Each game is different but only lasts 20-30 minutes. Great for two players but just as fun with more players.
+
+    It is a game of building a deck of cards. The deck contains your resources, victory points, and the things you can do. It starts out a small sad collection of Estates and Coppers, but you hope that by the end of the game it will be brimming with Gold, Provinces, and the inhabitants and structures of your kingdom.
+    """
+
     name: str = "Dominion"
     platform: KeymastersKeepGamePlatforms = (
         KeymastersKeepGamePlatforms.BOARD  # Board Game (Physical)

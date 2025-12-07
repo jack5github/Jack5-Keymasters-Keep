@@ -1,3 +1,14 @@
+"""
+A Keymaster's Keep implementation of Goofy Gorillas, created by Jack5. The following objective types are included:
+
+- Play gamemodes on specific maps
+- Play gamemodes with specific settings
+- Get kills with items
+- Beat time trial records on specific maps
+
+As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `goofy_gorillas_weights` YAML option.
+"""
+
 from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
@@ -31,6 +42,12 @@ class GoofyGorillasArchipelagoOptions:
 
 
 class GoofyGorillasGame(Game):
+    """
+    Goofy Gorillas is the biggest nostalgia-driven virtual jungle gym. It has a number of action-packed gamemodes in a selection of different venues, all designed for varying types of gameplay. Games range from all-out brawls using only Dodgeballs, to sardines in complete darkness. The game also uses positional proximity voice chat.
+
+    Taking part in the gamemodes will earn you Goofy Points, which will increase your level and unlock cosmetics. Additionally, while there's no on-going action, you can take part in some small activities such as the Time Trial events, Four in a Row and the Gravity arcade game.
+    """
+
     name: str = "Goofy Gorillas"
     platform: KeymastersKeepGamePlatforms = KeymastersKeepGamePlatforms.PC
     is_adult_only_or_unrated: bool = False

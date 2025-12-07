@@ -1,3 +1,19 @@
+"""
+A Keymaster's Keep implementation of Embr, created by Jack5. The following objective types are included:
+
+- Beat missions on specific neighbourhoods
+- Rescue all clients on specific neighbourhoods
+- Find all cash on specific neighbourhoods
+- Beat missions with specific loadouts/gear
+- Complete EmbrGigs and goals *(difficult and time consuming)*
+
+(The *Wayside Way* neighbourhood and districts other than *Bedbugstuy* are considered difficult.)
+
+As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `embr_weights` YAML option.
+
+Other YAML options are available for customising the occurrence of the availabe mission types and neighbourhoods.
+"""
+
 from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
@@ -91,6 +107,12 @@ class EmbrArchipelagoOptions:
 
 
 class EmbrGame(Game):
+    """
+    Embr is a multiplayer game where you team up with friends to fight fires for fun and profit in a hyper-capitalist world. It is an online co-op multiplayer game for up to four players, supporting player-hosted servers.
+
+    Rush into burning buildings filled with dangerous hazards, valuables, and top-of-the-line security systems. Fight fires, save lives, salvage goods, and make life-changing money. Buy high tech tools with advanced upgrades, and fresh outfits that unlock new ways to play.
+    """
+
     name: str = "Embr"
     platform: KeymastersKeepGamePlatforms = KeymastersKeepGamePlatforms.PC
     platforms_other: list[KeymastersKeepGamePlatforms] = [

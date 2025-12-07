@@ -1,3 +1,15 @@
+"""
+A Keymaster's Keep implementation of Asphalt Legends, created by Jack5. The following objective types are included:
+
+- Daily/VIP goals and events
+- Improve specific cars
+- Bonus objectives
+
+As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `asphalt_legends_weights` YAML option.
+
+For improving specific cars, the `asphalt_legends_cars` YAML option can be filled with the cars you own that you're able to upgrade or apply import parts to.
+"""
+
 from __future__ import annotations
 from dataclasses import dataclass
 from Options import OptionCounter, OptionList  # pyright: ignore[reportMissingImports]
@@ -47,6 +59,12 @@ class AsphaltLegendsArchipelagoOptions:
 
 
 class AsphaltLegendsGame(Game):
+    """
+    Asphalt Legends is the ultimate arcade racing experience. It is constantly being updated with new and exciting challenges, from co-op game modes to new competitive challenges. With full-on cross-platform support, you can play how you want, seamlessly switching between Manual or TouchDrive controls using a controller, keyboard or touchscreen.
+
+    It carries a beefy engine under the hood, making it the best-looking arcade racer on any screen. Choose from hundreds of supercars, including Lamborghinis, Ferraris, McLarens, and Porsches, and speed through beautifully rendered locations at heart-pounding speeds.
+    """
+
     name: str = "Asphalt Legends"
     platform: KeymastersKeepGamePlatforms = KeymastersKeepGamePlatforms.IOS  # Apple iOS
     platforms_other: list[KeymastersKeepGamePlatforms] = [

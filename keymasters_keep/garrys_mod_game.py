@@ -1,3 +1,17 @@
+"""
+A Keymaster's Keep implementation of Garry's Mod, created by Jack5. The following objective types are included:
+
+- Play on specific gamemodes/maps
+- Use specific weapons/tools
+- Spawn specific props/NPCs
+- Pose NPCs on/with specific maps/props
+- Kill NPCs with specific weapons
+
+As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `garrys_mod_weights` YAML option.
+
+Objectives rely on user-defined lists of gamemodes, maps, weapons, tools, props and NPCs. The defaults for the related options come pre-filled with content bundled with the game and a few extras, but the options are meant to be customised as players explore the Steam Workshop.
+"""
+
 from __future__ import annotations
 from dataclasses import dataclass
 from Options import OptionCounter, OptionList  # pyright: ignore[reportMissingImports]
@@ -451,6 +465,12 @@ class GarrysModArchipelagoOptions:
 
 
 class GarrysModGame(Game):
+    """
+    Garry's Mod is a physics sandbox, there aren't any predefined aims or goals. You spawn objects and weld them together to create your own contraptions; whether that's a car, a rocket, a catapult or something that doesn't have a name yet, that's up to you. You can do it offline, or join the thousands of players who play online each day.
+
+    The Garry's Mod community is a tremendous source of content and has added hundreds of unique modes to the game. The game has one of the most vibrant Steam Community Workshops. It has everything from new tools to improve your builds, to guns that fire rainbow-tinged nuclear blasts from space.
+    """
+
     name: str = "Garry's Mod"
     platform: KeymastersKeepGamePlatforms = KeymastersKeepGamePlatforms.PC
     platforms_other: list[KeymastersKeepGamePlatforms] = [

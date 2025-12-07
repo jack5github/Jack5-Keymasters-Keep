@@ -1,3 +1,16 @@
+"""
+A Keymaster's Keep implementation of Portal, created by Jack5. The following objective types are included:
+
+- Complete specific chambers / Reach specific locations / Defeat GLaDOS
+- Detach cameras in specific chambers
+- Find radio "dinosaur" noises in specific chambers *(difficult)*
+- Place in challenges *(difficult)*
+
+As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `portal_weights` YAML option.
+
+For challenges, the weight of each challenge can be customised using the `portal_challenge_weights` YAML option.
+"""
+
 from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
@@ -43,6 +56,12 @@ class PortalArchipelagoOptions:
 
 
 class PortalGame(Game):
+    """
+    Portal is a single player game from Valve. Set in the mysterious Aperture Science Laboratories, Portal has been called one of the most innovative new games on the horizon and will offer gamers hours of unique gameplay.
+
+    The game is designed to change the way players approach, manipulate, and surmise the possibilities in a given environment; similar to how Half-Life 2's Gravity Gun innovated new ways to leverage an object in any given situation. Players must solve physical puzzles and challenges by opening portals to maneuvering objects, and themselves, through space.
+    """
+
     name: str = "Portal"
     platform: KeymastersKeepGamePlatforms = KeymastersKeepGamePlatforms.PC
     platforms_other: list[KeymastersKeepGamePlatforms] = [
