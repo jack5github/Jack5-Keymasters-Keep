@@ -18,3 +18,4 @@ This repository contains Jack5's keep and trial definitions of various games, ma
 - **[Garry's Mod (PC + MOD)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/garrys_mod_game.py)**
 - **[Goofy Gorillas (PC)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/goofy_gorillas_game.py)**
 - **[Portal (PC + PS3, SW, X360)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/portal_game.py)**
+- **[Sanctum (PC)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/sanctum_game.py)**

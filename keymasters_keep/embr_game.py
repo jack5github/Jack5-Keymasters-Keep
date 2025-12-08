@@ -12,7 +12,7 @@ A Keymaster's Keep implementation of Embr, created by Jack5. The following objec
 
 As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `embr_weights` YAML option.
 
-Other YAML options are available for customising the occurrence of the availabe mission types and neighbourhoods.
+Other YAML options are available for customising the occurrence of the available mission types and neighbourhoods.
 """
 
 from __future__ import annotations
