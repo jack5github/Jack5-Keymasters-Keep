@@ -19,3 +19,4 @@ This repository contains Jack5's keep and trial definitions of various games, ma
 - **[Goofy Gorillas (PC)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/goofy_gorillas_game.py)**
 - **[Portal (PC + PS3, SW, X360)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/portal_game.py)**
 - **[Sanctum (PC)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/sanctum_game.py)**
+- **[Trivia Tricks (PC)](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/trivia_tricks_game.py)**
