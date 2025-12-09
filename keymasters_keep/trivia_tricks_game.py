@@ -16,7 +16,7 @@ Other YAML options are available for customising the occurrence of the available
 
 from __future__ import annotations
 from dataclasses import dataclass
-from Options import OptionCounter  # pyright: ignore[reportMissingImports]
+from Options import OptionCounter, OptionList  # pyright: ignore[reportMissingImports]
 from ..enums import KeymastersKeepGamePlatforms  # pyright: ignore[reportMissingImports]
 from ..game import Game  # pyright: ignore[reportMissingImports]
 from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
@@ -56,35 +56,35 @@ class TriviaTricksGamemodeWeights(OptionCounter):
     }
 
 
-class TriviaTricksCategoryWeights(OptionCounter):
+class TriviaTricksCategories(OptionList):
     """
-    The weights to use for categories in Trivia Tricks objectives that use them. "Steam Workshop" is included by default, but can be replaced with the names of the Steam Workshop categories one is subscribed to, or removed entirely. Removed categories will not appear in Trivia Tricks objectives.
+    The categories to use in Trivia Tricks objectives that use them. "Steam Workshop" is included by default, but can be replaced with the names of the Steam Workshop categories one is subscribed to, or removed entirely.
     """
 
-    display_name: str = "Trivia Tricks Category Weights"
-    default: dict[str, int] = {
-        "Animals": 1,
-        "Anime": 1,
-        "Art & Literature": 1,
-        "Film & TV": 1,
-        "Food & Drink": 1,
-        "Geography": 1,
-        "History": 1,
-        "Language": 1,
-        "Math": 1,
-        "Music": 1,
-        "Science & Technology": 1,
-        "Sports": 1,
-        "Video Games": 1,
-        "Steam Workshop": 1,
-    }
+    display_name: str = "Trivia Tricks Categories"
+    default: list[str] = [
+        "Animals",
+        "Anime",
+        "Art & Literature",
+        "Film & TV",
+        "Food & Drink",
+        "Geography",
+        "History",
+        "Language",
+        "Math",
+        "Music",
+        "Science & Technology",
+        "Sports",
+        "Video Games",
+        "Steam Workshop",
+    ]
 
 
 @dataclass
 class TriviaTricksArchipelagoOptions:
     trivia_tricks_weights: TriviaTricksWeights
     trivia_tricks_gamemode_weights: TriviaTricksGamemodeWeights
-    trivia_tricks_category_weights: TriviaTricksCategoryWeights
+    trivia_tricks_categories: TriviaTricksCategories
 
 
 class TriviaTricksGame(Game):
@@ -159,11 +159,6 @@ class TriviaTricksGame(Game):
         return ["no", "Normal", "No Items", "Chaotic"]
 
     # Categories cannot always be applied to Co-Op Vs Boss games
-    def categories(self) -> list[str]:
-        return self._get_weighted_items(
-            self.archipelago_options.trivia_tricks_category_weights.value.keys(),
-            self.archipelago_options.trivia_tricks_category_weights,
-        )
 
     @staticmethod
     def questions_number() -> range:
@@ -308,7 +303,10 @@ class TriviaTricksGame(Game):
                 label="Answer NUMBER CATEGORY question(s) correctly",
                 data={
                     "NUMBER": (self.questions_number, 1),
-                    "CATEGORY": (self.categories, 1),
+                    "CATEGORY": (
+                        lambda: self.archipelago_options.trivia_tricks_categories.value,
+                        1,
+                    ),
                 },
                 is_time_consuming=False,
                 is_difficult=False,
