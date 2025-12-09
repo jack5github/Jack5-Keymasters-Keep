@@ -3,7 +3,7 @@ A Keymaster's Keep implementation of Sanctum, created by Jack5 for Zeroman95. Th
 
 - Clear difficulties on specific levels in Story/Survival mode
 - Clear specific levels with specific gamemodes/weapons/towers
-- Clear a number of waves in gamemodes on specific levels
+- Clear a number of waves in gamemodes on specific levels (difficult and time consuming)
 - Bonus objectives
 
 (Objectives with 20+ waves are considered time consuming, and objectives with 30 waves or Hard or Insane difficulties are considered difficult.)
@@ -202,18 +202,6 @@ class SanctumGame(Game):
         ]
 
     @staticmethod
-    def waves_base() -> list[int]:
-        return [10]
-
-    @staticmethod
-    def waves_time_consuming() -> list[int]:
-        return [20]
-
-    @staticmethod
-    def waves_difficult() -> list[int]:
-        return [30]
-
-    @staticmethod
     def lumes_base() -> list[str]:
         return [
             "Blocker",
@@ -326,36 +314,24 @@ class SanctumGame(Game):
                 weight=weights["gamemode_on_level"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Beat WAVES waves of GAMEMODE gamemode on LEVEL",
-                data={
-                    "WAVES": (self.waves_base, 1),
-                    "GAMEMODE": (self.gamemodes, 1),
-                    "LEVEL": (self.levels, 1),
-                },
+                label="Beat 10 waves of GAMEMODE gamemode on LEVEL",
+                data={"GAMEMODE": (self.gamemodes, 1), "LEVEL": (self.levels, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=int(weights["gamemode_on_level_waves"] * factor * (1 / 3)),
             ),
             GameObjectiveTemplate(
-                label="Beat WAVES waves of GAMEMODE gamemode on LEVEL",
-                data={
-                    "WAVES": (self.waves_time_consuming, 1),
-                    "GAMEMODE": (self.gamemodes, 1),
-                    "LEVEL": (self.levels, 1),
-                },
+                label="Beat 20 waves of GAMEMODE gamemode on LEVEL",
+                data={"GAMEMODE": (self.gamemodes, 1), "LEVEL": (self.levels, 1)},
                 is_time_consuming=True,
                 is_difficult=False,
                 weight=int(weights["gamemode_on_level_waves"] * factor * (1 / 3)),
             ),
             GameObjectiveTemplate(
-                label="Beat WAVES waves of GAMEMODE gamemode on LEVEL",
-                data={
-                    "WAVES": (self.waves_difficult, 1),
-                    "GAMEMODE": (self.gamemodes, 1),
-                    "LEVEL": (self.levels, 1),
-                },
+                label="Beat 30 waves of GAMEMODE gamemode on LEVEL",
+                data={"GAMEMODE": (self.gamemodes, 1), "LEVEL": (self.levels, 1)},
                 is_time_consuming=True,
-                is_difficult=False,
+                is_difficult=True,
                 weight=int(weights["gamemode_on_level_waves"] * factor * (1 / 3)),
             ),
             GameObjectiveTemplate(

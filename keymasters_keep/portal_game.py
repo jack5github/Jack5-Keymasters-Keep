@@ -3,8 +3,8 @@ A Keymaster's Keep implementation of Portal, created by Jack5. The following obj
 
 - Complete specific chambers / Reach specific locations / Defeat GLaDOS
 - Detach cameras in specific chambers
-- Find radio "dinosaur" noises in specific chambers *(difficult)*
-- Place in challenges *(difficult)*
+- Find radio "dinosaur" noises in specific chambers (difficult)
+- Place in challenges (difficult)
 - Bonus objectives
 
 As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `portal_weights` YAML option.

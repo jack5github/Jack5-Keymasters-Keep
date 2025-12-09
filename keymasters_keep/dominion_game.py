@@ -3,9 +3,9 @@ A Keymaster's Keep implementation of Dominion, created by Jack5. The following o
 
 - Set up and play games with specific cards
 - Play specific cards
-- Win with specific cards *(difficult)*
-- Win against AIs *(video game)*
-- Bonus objectives *(video game)*
+- Win with specific cards (difficult)
+- Win against AIs (video game)
+- Bonus objectives (video game)
 
 As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `dominion_weights` YAML option.
 
