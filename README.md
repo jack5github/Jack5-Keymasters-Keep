@@ -14,7 +14,7 @@ This repository contains Jack5's keep and trial definitions of various games, ma
 
 Below are links to the [Keymaster's Keep Codex](https://silasary.github.io/kmk_tools/) entries and downloads (`.py` files) for all the games included in this repository:
 
-- **[Asphalt Legends (IOS + AND, PC, PS4, PS5, SW, XONE, XSX)](https://silasary.github.io/kmk_tools/games/dominion_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/asphalt_legends_game.py))
+- **[Asphalt Legends (IOS + AND, PC, PS4, PS5, SW, XONE, XSX)](https://silasary.github.io/kmk_tools/games/asphalt_legends_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/asphalt_legends_game.py))
 - **[Dominion (BOARD + AND, IOS, PC)](https://silasary.github.io/kmk_tools/games/dominion_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/dominion_game.py))
 - **[Embr (PC + PS4, SW, XONE)](https://silasary.github.io/kmk_tools/games/embr_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/embr_game.py))
 - **[Garry's Mod (PC + MOD)](https://silasary.github.io/kmk_tools/games/garrys_mod_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/garrys_mod_game.py))
