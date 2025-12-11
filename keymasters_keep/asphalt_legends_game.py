@@ -128,6 +128,7 @@ class AsphaltLegendsGame(Game):
     @staticmethod
     def bonus_objectives() -> list[str]:
         return [
+            "Almost crash by touching the ground while barrel rolling",
             "Barrel roll onto your back and crash",
             "Be forced into a 360 by a geyser",
             "Be pushed off your planned path by an opponent",
@@ -150,6 +151,7 @@ class AsphaltLegendsGame(Game):
             "Knockdown an opponent by driving into them without using nitro",
             "Knockdown an opponent by landing on them",
             "Knockdown an opponent by shockwaving into them at the start of a race",
+            "Knockdown an opponent while the Knockdown Camera is active",
             "Knockdown an opponent with a 360",
             "Observe obvious AI rubber-banding",
             "Observe sub-optimal TouchDrive behaviour",

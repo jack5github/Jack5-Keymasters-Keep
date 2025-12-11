@@ -338,7 +338,8 @@ class EmbrGame(Game):
         return [
             "Abandon a job",
             "Allow a client to die",
-            "Bounce on 2 Jump Pads without touching the ground",
+            "Bounce on 2 Jump Pads across 2 gaps without touching the ground",
+            "Bounce on 2 Jump Pads up 2 floors without touching the ground",
             "Break a floorboard",
             "Buy something from the Embr Shop",
             "Change the upgrades of a tool",
