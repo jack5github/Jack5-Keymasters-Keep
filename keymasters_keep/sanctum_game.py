@@ -31,12 +31,11 @@ class SanctumWeights(OptionCounter):
 
     display_name: str = "Sanctum Weights"
     default: dict[str, int] = {
-        "story_difficulty_on_level": 2,
-        "survival_difficulty_on_level": 2,
+        "story_difficulty_on_level": 3,
         "weapons_on_level": 2,
         "towers_on_level": 1,
         "gamemode_on_level": 1,
-        "gamemode_on_level_waves": 2,
+        "gamemode_on_level_waves": 3,
         "weapons_towers_on_level": 2,
         "gamemode_towers_on_level": 1,
         "kill_lumes": 4,
@@ -260,7 +259,7 @@ class SanctumGame(Game):
                 },
                 is_time_consuming=False,
                 is_difficult=False,
-                weight=int(weights["survival_difficulty_on_level"] * factor / 2),
+                weight=int(weights["story_difficulty_on_level"] * factor / 2),
             ),
             GameObjectiveTemplate(
                 label="Beat Story mode with DIFFICULTY difficulty on LEVEL",
@@ -270,27 +269,7 @@ class SanctumGame(Game):
                 },
                 is_time_consuming=False,
                 is_difficult=True,
-                weight=int(weights["survival_difficulty_on_level"] * factor / 2),
-            ),
-            GameObjectiveTemplate(
-                label="Beat Survival mode with DIFFICULTY difficulty on LEVEL",
-                data={
-                    "DIFFICULTY": (self.difficulties_base, 1),
-                    "LEVEL": (self.levels, 1),
-                },
-                is_time_consuming=False,
-                is_difficult=False,
-                weight=int(weights["survival_difficulty_on_level"] * factor * (2 / 3)),
-            ),
-            GameObjectiveTemplate(
-                label="Beat Survival mode with DIFFICULTY difficulty on LEVEL",
-                data={
-                    "DIFFICULTY": (self.difficulties_difficult_survival, 1),
-                    "LEVEL": (self.levels, 1),
-                },
-                is_time_consuming=False,
-                is_difficult=True,
-                weight=int(weights["survival_difficulty_on_level"] * factor * (1 / 3)),
+                weight=int(weights["story_difficulty_on_level"] * factor / 2),
             ),
             GameObjectiveTemplate(
                 label="Beat LEVEL with weapons WEAPONS",
