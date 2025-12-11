@@ -181,8 +181,12 @@ class GoofyGorillasGame(Game):
         return ["Time Trial", "Fruit Frenzy"]
 
     @staticmethod
-    def random_players() -> range:
+    def random_players_base() -> range:
         return range(2, 5 + 1)
+
+    @staticmethod
+    def random_players_difficult() -> range:
+        return range(1, 3 + 1)
 
     @cached_property
     def enabled_items(self) -> list[str]:
@@ -375,17 +379,37 @@ class GoofyGorillasGame(Game):
             ),
             GameObjectiveTemplate(
                 label="Kill PLAYERS players with ITEM",
-                data={"PLAYERS": (self.random_players, 1), "ITEM": (self.all_items, 1)},
+                data={
+                    "PLAYERS": (self.random_players_base, 1),
+                    "ITEM": (lambda: self.enabled_items, 1),
+                },
                 is_time_consuming=False,
                 is_difficult=False,
-                weight=weights["kills_with_items"] * factor,
+                weight=int(weights["kills_with_items"] * factor * 0.8),
+            ),
+            GameObjectiveTemplate(
+                label="Kill PLAYERS player(s) with ITEM",
+                data={
+                    "PLAYERS": (self.random_players_difficult, 1),
+                    "ITEM": (lambda: self.floor_items, 1),
+                },
+                is_time_consuming=False,
+                is_difficult=True,
+                weight=int(weights["kills_with_items"] * factor * 0.2),
+            ),
+            GameObjectiveTemplate(
+                label="Attempt TRIAL on MAP",
+                data={"TRIAL": (self.time_trials, 1), "MAP": (self.all_maps, 1)},
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["time_trials"] * factor / 2),
             ),
             GameObjectiveTemplate(
                 label="Beat your TRIAL record on MAP",
                 data={"TRIAL": (self.time_trials, 1), "MAP": (self.all_maps, 1)},
                 is_time_consuming=False,
                 is_difficult=True,
-                weight=weights["time_trials"] * factor,
+                weight=int(weights["time_trials"] * factor / 2),
             ),
             GameObjectiveTemplate(
                 label="BONUS",
