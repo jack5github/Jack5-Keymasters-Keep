@@ -2,10 +2,9 @@
 A Keymaster's Keep implementation of Garry's Mod, created by Jack5. The following objective types are included:
 
 - Play on specific gamemodes/maps
-- Use specific weapons/tools
+- Kill players/NPCs with specific weapons/tools
 - Spawn specific props/NPCs
 - Pose NPCs on/with specific maps/props
-- Kill NPCs with specific weapons
 - Bonus objectives
 
 As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `garrys_mod_weights` YAML option.
@@ -47,9 +46,9 @@ class GarrysModWeights(OptionCounter):
     If not playing Sandbox, start with the following instead:
 
     ```yaml
-    gamemodes: 7
-    maps: 7
-    gamemode_in_map: 2
+    gamemodes: 8
+    maps: 8
+    gamemode_in_map: 4
     weapons: 4
     player_models: 1
     props: 0
@@ -64,10 +63,10 @@ class GarrysModWeights(OptionCounter):
 
     display_name: str = "Garry's Mod Weights"
     default: dict[str, int] = {
-        "gamemodes": 7,
-        "maps": 7,
+        "gamemodes": 8,
+        "maps": 8,
         # Due to the unlikelihood of gamemodes supporting every map and weapon, the weight for "gamemode_in_map" and "weapons" are lower than normal
-        "gamemode_in_map": 2,
+        "gamemode_in_map": 4,
         "weapons": 4,
         # Changing player models all the time is a bit much, so this weight is much lower than normal
         "player_models": 1,
@@ -348,7 +347,6 @@ class GarrysModWeapons(OptionList):
     default: list[str] = [
         ".357 Magnum",
         "Pulse-Rifle",
-        "Bugbait",
         "Crossbow",
         "Crowbar",
         "Frag Grenade",
@@ -376,6 +374,7 @@ class GarrysModTools(OptionList):
 
     display_name: str = "Garry's Mod Tools"
     default: list[str] = [
+        "Bugbait",
         "Camera",
         "Tool Gun",
         "Physics Gun",
@@ -485,6 +484,10 @@ class GarrysModGame(Game):
             return self.archipelago_options.garrys_mod_gamemodes.value
         return self.archipelago_options.garrys_mod_gamemodes.default
 
+    @staticmethod
+    def play_minutes() -> range:
+        return range(5, 30 + 1, 5)
+
     def maps(self) -> list[str]:
         if len(self.archipelago_options.garrys_mod_maps.value) > 0:
             return self.archipelago_options.garrys_mod_maps.value
@@ -505,6 +508,10 @@ class GarrysModGame(Game):
             return self.archipelago_options.garrys_mod_weapons.value
         return self.archipelago_options.garrys_mod_weapons.default
 
+    @staticmethod
+    def kills_number() -> range:
+        return range(2, 5 + 1)
+
     def tools(self) -> list[str]:
         if len(self.archipelago_options.garrys_mod_tools.value) > 0:
             return self.archipelago_options.garrys_mod_tools.value
@@ -514,6 +521,10 @@ class GarrysModGame(Game):
         if len(self.archipelago_options.garrys_mod_npcs.value) > 0:
             return self.archipelago_options.garrys_mod_npcs.value
         return self.archipelago_options.garrys_mod_npcs.default
+
+    @staticmethod
+    def spawns_number() -> list[int]:
+        return [i**2 for i in range(1, 5 + 1)]
 
     @staticmethod
     def bonus_objectives() -> list[str]:
@@ -576,21 +587,24 @@ class GarrysModGame(Game):
         factor: int = 100
         return [
             GameObjectiveTemplate(
-                label="Play GAMEMODE",
-                data={"GAMEMODE": (self.gamemodes, 1)},
+                label="Play GAMEMODE for MINUTES minutes",
+                data={
+                    "GAMEMODE": (self.gamemodes, 1),
+                    "MINUTES": (self.play_minutes, 1),
+                },
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["gamemodes"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Play on MAP",
-                data={"MAP": (self.maps, 1)},
+                label="Play on map MAP for MINUTES minutes",
+                data={"MAP": (self.maps, 1), "MINUTES": (self.play_minutes, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["maps"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Play GAMEMODE on MAP if possible",
+                label="Play GAMEMODE on map MAP if possible",
                 data={"GAMEMODE": (self.gamemodes, 1), "MAP": (self.maps, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
@@ -608,67 +622,85 @@ class GarrysModGame(Game):
                 data={"PROP": (self.props, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
-                weight=weights["props"] * factor,
+                weight=int(weights["props"] * factor / 3),
             ),
             GameObjectiveTemplate(
-                label="Use WEAPON weapon",
-                data={"WEAPON": (self.weapons, 1)},
+                label="Spawn PROPS props",
+                data={"PROP": (self.props, 2)},
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["props"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Spawn PROPS props",
+                data={"PROP": (self.props, 3)},
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["props"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Kill AMOUNT players or NPCs with WEAPON",
+                data={"AMOUNT": (self.kills_number, 1), "WEAPON": (self.weapons, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["weapons"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Use TOOL",
+                label="Use tool TOOL",
                 data={"TOOL": (self.tools, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["tools"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Spawn CHARACTER NPC",
-                data={"CHARACTER": (self.npcs, 1)},
+                label="Spawn AMOUNT CHARACTER NPC(s)",
+                data={"AMOUNT": (self.spawns_number, 1), "CHARACTER": (self.npcs, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["npcs"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Pose CHARACTER in MAP",
+                label="Pose CHARACTER in map MAP",
                 data={"CHARACTER": (self.npcs, 1), "MAP": (self.maps, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=int(weights["pose_npcs_in_map"] * factor / 2),
             ),
             GameObjectiveTemplate(
-                label="Pose CHARACTERS in MAP",
+                label="Pose CHARACTERS in map MAP",
                 data={"CHARACTERS": (self.npcs, 2), "MAP": (self.maps, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=int(weights["pose_npcs_in_map"] * factor / 2),
             ),
             GameObjectiveTemplate(
-                label="Pose CHARACTER with PROPS",
+                label="Pose CHARACTER with PROPS props",
                 data={"CHARACTER": (self.npcs, 1), "PROPS": (self.props, 2)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=int(weights["pose_npc_with_props"] * factor / 3),
             ),
             GameObjectiveTemplate(
-                label="Pose CHARACTER with PROPS",
+                label="Pose CHARACTER with PROPS props",
                 data={"CHARACTER": (self.npcs, 1), "PROPS": (self.props, 3)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=int(weights["pose_npc_with_props"] * factor / 3),
             ),
             GameObjectiveTemplate(
-                label="Pose CHARACTER with PROPS",
+                label="Pose CHARACTER with PROPS props",
                 data={"CHARACTER": (self.npcs, 1), "PROPS": (self.props, 4)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=int(weights["pose_npc_with_props"] * factor / 3),
             ),
             GameObjectiveTemplate(
-                label="Kill CHARACTER with WEAPON",
-                data={"CHARACTER": (self.npcs, 1), "WEAPON": (self.weapons, 1)},
+                label="Kill AMOUNT CHARACTER NPC(s) with WEAPON",
+                data={
+                    "AMOUNT": (self.spawns_number, 1),
+                    "CHARACTER": (self.npcs, 1),
+                    "WEAPON": (self.weapons, 1),
+                },
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["kill_npc_with_weapon"] * factor,
