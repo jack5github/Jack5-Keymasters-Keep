@@ -144,16 +144,28 @@ class SanctumGame(Game):
         )
 
     @cached_property
-    def levels_base(self) -> list[str]:
-        return ["Mine", "Bridge", "Arc", "Glade", "Complex", "Facility", "Whirlpool"]
+    def levels_base_any(self) -> list[str]:
+        return ["Mine", "Bridge", "Arc", "Glade", "Facility", "Whirlpool"]
 
     @cached_property
-    def levels_map_pack_1(self) -> list[str]:
+    def levels_base_no_floors(self) -> list[str]:
+        return ["Complex"]
+
+    @cached_property
+    def levels_map_pack_1_any(self) -> list[str]:
         return ["AfterMath", "AfterShock", "Cavern", "Slums"]
 
     @cached_property
-    def levels_map_pack_2(self) -> list[str]:
-        return ["Corporation", "Invasion", "Chasm"]
+    def levels_map_pack_1_no_anti_air(self) -> list[str]:
+        return ["Cavern"]
+
+    @cached_property
+    def levels_map_pack_2_any(self) -> list[str]:
+        return ["Corporation"]
+
+    @cached_property
+    def levels_map_pack_2_no_anti_air(self) -> list[str]:
+        return ["Invasion", "Chasm"]
 
     @cached_property
     def levels_yogscast(self) -> list[str]:
@@ -163,12 +175,18 @@ class SanctumGame(Game):
     def levels_xmas_carnage(self) -> list[str]:
         return ["Christmas"]
 
-    def levels(self) -> list[str]:
-        levels: list[str] = list(self.levels_base)
+    def levels(self, anti_air: bool = True, floors: bool = True) -> list[str]:
+        levels: list[str] = list(self.levels_base_any)
+        if not anti_air and not floors:
+            levels.extend(self.levels_base_no_floors)
         if "Map Pack 1" in self.archipelago_options.sanctum_owned_dlcs.value:
-            levels.extend(self.levels_map_pack_1)
+            levels.extend(self.levels_map_pack_1_any)
+            if not anti_air:
+                levels.extend(self.levels_map_pack_1_no_anti_air)
         if "Map Pack 2" in self.archipelago_options.sanctum_owned_dlcs.value:
-            levels.extend(self.levels_map_pack_2)
+            levels.extend(self.levels_map_pack_2_any)
+            if not anti_air:
+                levels.extend(self.levels_map_pack_2_no_anti_air)
         if "X-Mas Carnage" in self.archipelago_options.sanctum_owned_dlcs.value:
             levels.extend(self.levels_xmas_carnage)
         if "Yogscave" in self.archipelago_options.sanctum_owned_dlcs.value:
@@ -177,31 +195,56 @@ class SanctumGame(Game):
             levels, self.archipelago_options.sanctum_level_weights
         )
 
+    def levels_no_anti_air(self) -> list[str]:
+        return self.levels(anti_air=False)
+
+    def levels_no_floors(self) -> list[str]:
+        return self.levels(anti_air=False, floors=False)
+
     @staticmethod
     def weapons() -> list[str]:
         return ["Assault", "Sniper", "Shotgun", "Freeze", "Rex", "Tesla"]
 
-    @staticmethod
-    def towers() -> list[str]:
+    @cached_property
+    def towers_any_list(self) -> list[str]:
         return [
             "Holo",
-            "Slowfield",
-            "Ampfield",
             "Gatling",
             "Penetrator",
             "Lightning",
             "Mortar",
             "Scatter Laser",
             "Violator",
-            "Anti-Air",
-            "Killing Floor",
             "Kairos",
             "Accelerator",
             "Drone",
         ]
 
+    @cached_property
+    def towers_anti_air_list(self) -> list[str]:
+        return ["Anti-Air"]
+
+    @cached_property
+    def towers_floors_list(self) -> list[str]:
+        return ["Ampfield", "Killing Floor", "Slowfield"]
+
+    def towers(self, anti_air: bool = True, floors: bool = True) -> list[str]:
+        towers: list[str] = list(self.towers_any)
+        if anti_air:
+            towers.extend(self.towers_anti_air_list)
+        if floors:
+            towers.extend(self.towers_floors_list)
+        return towers
+
+    def towers_no_anti_air(self) -> list[str]:
+        return self.towers(anti_air=False)
+
+    def towers_no_floors(self) -> list[str]:
+        return self.towers(anti_air=False, floors=False)
+
     @staticmethod
     def lumes_base() -> list[str]:
+        # Dodger, Glider and Spore Pod do not appear on levels that do not use Anti-Air
         return [
             "Blocker",
             "Bobble Head",
@@ -252,7 +295,7 @@ class SanctumGame(Game):
         factor: int = 100
         return [
             GameObjectiveTemplate(
-                label="Beat Story mode with DIFFICULTY difficulty on LEVEL",
+                label="Beat Story mode at DIFFICULTY difficulty on LEVEL",
                 data={
                     "DIFFICULTY": (self.difficulties_base, 1),
                     "LEVEL": (self.levels, 1),
@@ -262,7 +305,7 @@ class SanctumGame(Game):
                 weight=int(weights["story_difficulty_on_level"] * factor / 2),
             ),
             GameObjectiveTemplate(
-                label="Beat Story mode with DIFFICULTY difficulty on LEVEL",
+                label="Beat Story mode at DIFFICULTY difficulty on LEVEL",
                 data={
                     "DIFFICULTY": (self.difficulties_difficult_story, 1),
                     "LEVEL": (self.levels, 1),
@@ -283,7 +326,27 @@ class SanctumGame(Game):
                 data={"LEVEL": (self.levels, 1), "TOWERS": (self.towers, 3)},
                 is_time_consuming=False,
                 is_difficult=False,
-                weight=weights["weapons_on_level"] * factor,
+                weight=int(weights["weapons_on_level"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Beat LEVEL with towers TOWERS",
+                data={
+                    "LEVEL": (self.levels_no_anti_air, 1),
+                    "TOWERS": (self.towers_no_anti_air, 3),
+                },
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["weapons_on_level"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Beat LEVEL with towers TOWERS",
+                data={
+                    "LEVEL": (self.levels_no_floors, 1),
+                    "TOWERS": (self.towers_no_floors, 3),
+                },
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["weapons_on_level"] * factor / 3),
             ),
             GameObjectiveTemplate(
                 label="Beat GAMEMODE gamemode on LEVEL",
@@ -322,7 +385,29 @@ class SanctumGame(Game):
                 },
                 is_time_consuming=False,
                 is_difficult=False,
-                weight=weights["weapons_towers_on_level"] * factor,
+                weight=int(weights["weapons_towers_on_level"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Beat LEVEL with weapons WEAPONS & towers TOWERS",
+                data={
+                    "LEVEL": (self.levels_no_anti_air, 1),
+                    "WEAPONS": (self.weapons, 3),
+                    "TOWERS": (self.towers_no_anti_air, 3),
+                },
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["weapons_towers_on_level"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Beat LEVEL with weapons WEAPONS & towers TOWERS",
+                data={
+                    "LEVEL": (self.levels_no_floors, 1),
+                    "WEAPONS": (self.weapons, 3),
+                    "TOWERS": (self.towers_no_floors, 3),
+                },
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["weapons_towers_on_level"] * factor / 3),
             ),
             GameObjectiveTemplate(
                 label="Beat GAMEMODE gamemode on LEVEL with towers TOWERS",
@@ -333,7 +418,29 @@ class SanctumGame(Game):
                 },
                 is_time_consuming=False,
                 is_difficult=False,
-                weight=weights["gamemode_towers_on_level"] * factor,
+                weight=int(weights["gamemode_towers_on_level"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Beat GAMEMODE gamemode on LEVEL with towers TOWERS",
+                data={
+                    "GAMEMODE": (self.gamemodes, 1),
+                    "LEVEL": (self.levels_no_anti_air, 1),
+                    "TOWERS": (self.towers_no_anti_air, 3),
+                },
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["gamemode_towers_on_level"] * factor / 3),
+            ),
+            GameObjectiveTemplate(
+                label="Beat GAMEMODE gamemode on LEVEL with towers TOWERS",
+                data={
+                    "GAMEMODE": (self.gamemodes, 1),
+                    "LEVEL": (self.levels_no_floors, 1),
+                    "TOWERS": (self.towers_no_floors, 3),
+                },
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=int(weights["gamemode_towers_on_level"] * factor / 3),
             ),
             GameObjectiveTemplate(
                 label="Kill NUMBER LUMEs",
