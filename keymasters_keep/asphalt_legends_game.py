@@ -117,8 +117,7 @@ class AsphaltLegendsGame(Game):
         return [
             "Claim a VIP pack",
             "Buy something from the VIP Market",
-            "Play the Elite daily event",
-            "Set a time in or challenge an opponent in the Gauntlet special event",
+            "Play the Elite daily event or Gauntlet special event",
         ]
 
     @staticmethod

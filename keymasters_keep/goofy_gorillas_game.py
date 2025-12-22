@@ -249,6 +249,7 @@ class GoofyGorillasGame(Game):
             "Kill a prop in Prop Hunt",
             "Level up",
             "Manually taunt in Prop Hunt and have no-one notice",
+            "Play Apocalypse",
             "Play bowling on Original",
             "Score a basketball hoop on Original",
             "Score a soccer goal on Original",
