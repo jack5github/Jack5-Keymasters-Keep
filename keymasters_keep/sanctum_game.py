@@ -229,7 +229,7 @@ class SanctumGame(Game):
         return ["Ampfield", "Killing Floor", "Slowfield"]
 
     def towers(self, anti_air: bool = True, floors: bool = True) -> list[str]:
-        towers: list[str] = list(self.towers_any)
+        towers: list[str] = list(self.towers_any_list)
         if anti_air:
             towers.extend(self.towers_anti_air_list)
         if floors:
