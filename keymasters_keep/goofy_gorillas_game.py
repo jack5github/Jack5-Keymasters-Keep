@@ -171,7 +171,7 @@ class GoofyGorillasGame(Game):
         )
 
     def all_gamemodes_pickups(self) -> list[str]:
-        return self.gamemodes_base + self.gamemodes_not_the_complex
+        return self.gamemodes_base
 
     def all_gamemodes_not_the_complex(self) -> list[str]:
         return self.gamemodes_base + self.gamemodes_no_pickups + self.gamemodes_no_items
