@@ -909,35 +909,16 @@ class ConsumablesGame(Game):
     def consumables_str(self) -> list[str]:
         consumables_list: list[Consumable] = []
 
-        def cons_allowed(cons: Consumable | ConsumableConditional) -> bool:
+        def cons_allowed(cons: Consumable) -> bool:
             """
             Checks that the consumable is allowed to appear in the game according to the `consumables_min_rarity`, `consumables_max_rarity` and `consumables_banned_types` options.
 
             Args:
-                cons (Consumable | ConsumableConditional): The consumable to check.
-
-            Raises:
-                RuntimeError: If the consumable does not have a rarity.
+                cons (Consumable): The consumable to check.
 
             Returns:
                 bool: Whether the consumable is allowed to appear in the game.
             """
-            if cons.rarity is None:
-                raise RuntimeError(
-                    f"Consumable or conditional unexpectedly does not have rarity: {
-                        cons.__str__(
-                            show_rarity=bool(
-                                self.archipelago_options.consumables_show_rarities.value
-                            ),
-                            show_name=bool(
-                                self.archipelago_options.consumables_show_names.value
-                            ),
-                            show_creators=bool(
-                                self.archipelago_options.consumables_show_creators.value
-                            )
-                        )
-                    }"
-                )
             return (
                 cons.rarity.value
                 >= self.archipelago_options.consumables_min_rarity.value
@@ -959,22 +940,16 @@ class ConsumablesGame(Game):
                 continue
             # Conditionals are converted into separate consumables
             for cond in cons.conditionals:
-                if cond.rarity is None:
-                    cond.rarity = cons.rarity
-                if not cons_allowed(cond):
-                    continue
                 cond_cons: Consumable = Consumable(
                     name=cond.name,
                     description=f"{cond.condition}, {cons.description[0].lower()}{cons.description[1:]}",
-                    inspiration=cond.inspiration or cons.inspiration,
-                    rarity=cond.rarity,
-                    types=[
-                        *([] if cons.types is None else cons.types),
-                        *([] if cond.types is None else cond.types),
-                    ],
+                    inspiration=cond.inspiration,
+                    rarity=cons.rarity if cond.rarity is None else cond.rarity,
+                    types=[*cons.types, *cond.types],
                     creators=cond.creators or cons.creators,
                 )
-                consumables_list.append(cond_cons)
+                if cons_allowed(cond_cons):
+                    consumables_list.append(cond_cons)
         # Load custom consumables from option
         ccons_parsed: list[dict[str, Any]] = Utils.parse_yaml(
             self.archipelago_options.consumables_custom_consumables.value
