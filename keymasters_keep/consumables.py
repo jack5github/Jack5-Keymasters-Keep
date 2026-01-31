@@ -67,12 +67,12 @@ class ConsumablesBannedTypes(Options.OptionList):
 # TODO: Accept a true list of dictionaries as opposed to a string
 class ConsumablesCustomConsumables(Options.FreeText):
     """
-    A YAML list of user-made consumables to add to the game, passed as a string. Custom consumables obey the `consumables_min_rarity`, `consumables_max_rarity` and `consumables_banned_types` options. When setting this option, put "|-" after the option name and fill out the list on subsequent lines. Each item in the list should be a dictionary with the following keys:
+    YAML lists of user-made consumables to add to the game, passed as strings. Custom consumables obey the `consumables_min_rarity`, `consumables_max_rarity` and `consumables_banned_types` options. Each item in a YAML list should be a dictionary with the following keys:
         - `name` (str) - The name of the consumable.
         - `description` (str) - The description of the consumable.
         - `rarity` (str | int) - The rarity of the consumable, as it is represented in the `ConsumableRarity` enum.
         - `types` (list[str]): The types of the consumable, used in filtering. Defaults to None.
-        - `creators` (str | list[str]) - The people that came up with the idea for the consumable.
+        - `creators` (list[str]) - The people that came up with the idea for the consumable.
     """
 
     display_name: str = "Consumables Custom Consumables"
@@ -277,13 +277,14 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="1 RANDOM IN 2 RANDOM",
+                name="Flight of Passage",
                 description="Complete 1 random trial each in up to 2 random accessible areas.",
+                inspiration="Portal 2",
                 rarity=ConsumableRarity.common,
                 types=["random_trial", "random_area"],
                 conditionals=[
                     ConsumableConditional(
-                        name="1 RANDOM IN 2 RANDOM ON AREA",
+                        name="Charted Flight",
                         condition="On area completion",
                         types=["on_area"],
                     )
@@ -335,18 +336,20 @@ class ConsumablesGame(Game):
             ),
             # **Complete Specific Trials**
             Consumable(
-                name="1 EDGES IN 1 CHOSEN",
+                name="Chainlink Lasso",
                 description="Complete the trials at the top and bottom of 1 accessible area.",
+                inspiration="PEAK",
                 rarity=ConsumableRarity.uncommon,
                 types=["top_bottom_trials", "chosen_area"],
                 conditionals=[
                     ConsumableConditional(
-                        name="1 EDGES IN 1 CHOSEN ON AREA",
+                        name="Lasso of Destiny",
+                        inspiration="Indiana Jones and the Dial of Destiny",
                         condition="On area completion",
                         types=["on_area"],
                     ),
                     ConsumableConditional(
-                        name="1 EDGES IN 1 CHOSEN ON TRIAL",
+                        name="Pocket Lasso",
                         condition="On top or bottom trial completion, given the area is the same",
                         rarity=ConsumableRarity.common,
                         types=["on_trial", "in_same_area"],
@@ -479,8 +482,9 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="5 CHOSEN IN ANY",
+                name="Chimera's Instinct",
                 description="Complete up to 5 accessible trials from anywhere.",
+                inspiration="Tower Unite (Little Crusaders)",
                 rarity=ConsumableRarity.epic,
                 types=["chosen_trial", "any_areas"],
             ),
@@ -683,13 +687,14 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="ALL IN 1 CHOSEN",
+                name="Ever-Unravelling Scroll",
                 description="Complete all trials in 1 accessible area.",
+                inspiration="Vampire Survivors",
                 rarity=ConsumableRarity.super_epic,
                 types=["all_trials", "chosen_area"],
                 conditionals=[
                     ConsumableConditional(
-                        name="ALL IN 1 CHOSEN ON AREA",
+                        name="Ever-Unravelling Banner",
                         condition="On area completion",
                         types=["on_area"],
                     ),
