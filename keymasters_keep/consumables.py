@@ -285,8 +285,9 @@ class ConsumablesGame(Game):
                 types=["chosen_trial", "any_areas", "trial_adjustment"],
             ),
             Consumable(
-                name="1 NOT LAST REQUIRED",
+                name="Sleeper Goggles",
                 description="Meet most of 1 trial's requirements to complete it, skipping the last required step.",
+                inspiration="Receiver 2",
                 rarity=ConsumableRarity.common,
                 types=["chosen_trial", "any_areas", "trial_adjustment"],
             ),
@@ -493,7 +494,7 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="2 RANDOM IN 1 CHOSEN",
+                name="Stray Projectile",
                 description="Complete up to 2 random trials in 1 accessible area.",
                 rarity=ConsumableRarity.uncommon,
                 types=["random_trial", "chosen_area"],
@@ -504,8 +505,9 @@ class ConsumablesGame(Game):
                         types=["on_area"],
                     ),
                     ConsumableConditional(
-                        name="2 RANDOM IN 1 CHOSEN ON TRIAL",
+                        name="Piercing Projectile",
                         condition="On trial completion, given the area is the same",
+                        inspiration="Reflect Missile",
                         rarity=ConsumableRarity.common,
                         types=["on_trial", "in_same_area"],
                     ),
@@ -671,8 +673,9 @@ class ConsumablesGame(Game):
                 types=["chosen_trial", "any_areas"],
             ),
             Consumable(
-                name="1 CHOSEN IN ALL",
+                name="Weapons Marketplace",
                 description="Complete 1 trial each in all accessible areas.",
+                inspiration="Garry's Mod",
                 rarity=ConsumableRarity.super_epic,
                 types=["chosen_trial", "all_areas"],
                 conditionals=[
@@ -682,14 +685,15 @@ class ConsumablesGame(Game):
                         types=["on_area"],
                     ),
                     ConsumableConditional(
-                        name="1 CHOSEN IN ALL ON TRIAL",
+                        name="Cross-Town Marketplace",
                         condition="On trial completion, excluding the current area",
                         rarity=ConsumableRarity.epic,
                         types=["on_trial", "in_other_areas"],
                     ),
                     ConsumableConditional(
-                        name="1 CHOSEN IN ALL ON SHOP",
+                        name="Merchant's Marketplace",
                         condition="On shop item purchase",
+                        inspiration="Steam Community Market",
                         types=["on_shop"],
                     ),
                 ],
@@ -804,8 +808,9 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="ANY HINTS IN 1 AREA",
+                name="Archeologist's Logbook",
                 description="If any items are hinted for 1 accessible area, complete them.",
+                inspiration="Captain Toad: Treasure Tracker",
                 rarity=ConsumableRarity.rare,
                 types=[
                     "on_hint",
@@ -816,7 +821,7 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="ANY HINTS IN 2 AREAS",
+                name="Hoarder's Logbook",
                 description="If any items are hinted for up to 2 accessible areas, complete them.",
                 rarity=ConsumableRarity.very_rare,
                 types=[
