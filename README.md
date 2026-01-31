@@ -21,5 +21,6 @@ Below are links to the [Keymaster's Keep Codex](https://silasary.github.io/kmk_t
 - **[Garry's Mod (PC + MOD)](https://silasary.github.io/kmk_tools/games/garrys_mod_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/garrys_mod_game.py))
 - **[Goofy Gorillas (PC)](https://silasary.github.io/kmk_tools/games/goofy_gorillas_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/goofy_gorillas_game.py))
 - **[Portal (PC + PS3, SW, X360)](https://silasary.github.io/kmk_tools/games/portal_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/portal_game.py))
+- **[R.E.P.O. (PC)](https://silasary.github.io/kmk_tools/games/repo_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/repo_game.py))
 - **[Sanctum (PC)](https://silasary.github.io/kmk_tools/games/sanctum_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/sanctum_game.py))
 - **[Trivia Tricks (PC)](https://silasary.github.io/kmk_tools/games/trivia_tricks_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/trivia_tricks_game.py))
