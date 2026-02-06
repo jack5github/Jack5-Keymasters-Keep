@@ -292,8 +292,21 @@ class ConsumablesGame(Game):
                 types=["chosen_trial", "any_areas", "trial_adjustment"],
             ),
             Consumable(
-                name="1 IN 12 HOURS",
+                name="Caustic Lightning Rod",
                 description="If 1 trial is incomplete after 12 hours, complete it.",
+                inspiration="Evaporate: Acid Rain",
+                rarity=ConsumableRarity.uncommon,
+                types=[
+                    "chosen_trial",
+                    "any_areas",
+                    "trial_adjustment",
+                    "conditional",
+                    "time",
+                ],
+            ),
+            Consumable(
+                name="Multi-Lightning Rod",
+                description="If up to 2 trials are both incomplete after 12 hours, complete them.",
                 rarity=ConsumableRarity.uncommon,
                 types=[
                     "chosen_trial",
@@ -307,18 +320,6 @@ class ConsumablesGame(Game):
                 name="1 IN 1 HOUR",
                 description="If 1 trial is incomplete after 1 hour, complete it.",
                 rarity=ConsumableRarity.rare,
-                types=[
-                    "chosen_trial",
-                    "any_areas",
-                    "trial_adjustment",
-                    "conditional",
-                    "time",
-                ],
-            ),
-            Consumable(
-                name="2 IN 12 HOURS",
-                description="If up to 2 trials are both incomplete after 12 hours, complete them.",
-                rarity=ConsumableRarity.uncommon,
                 types=[
                     "chosen_trial",
                     "any_areas",
@@ -584,14 +585,15 @@ class ConsumablesGame(Game):
                 types=["top_bottom_trials", "chosen_area"],
             ),
             Consumable(
-                name="BESIDE 5 IN 1 CHOSEN",
+                name="Telescopic Window",
                 description="Complete the trials right beside all 5+ trial chains in 1 accessible area.",
                 rarity=ConsumableRarity.rare,
                 types=["trials_beside", "chosen_area"],
                 conditionals=[
                     ConsumableConditional(
-                        name="BESIDE 5 IN 1 CHOSEN ON TRIAL",
+                        name="Projecting Window",
                         condition="On trial completion, given it is part of the chain",
+                        inspiration="Quack Pack",
                         rarity=ConsumableRarity.uncommon,
                         types=["on_trial", "in_trial_chain"],
                     )
@@ -834,26 +836,29 @@ class ConsumablesGame(Game):
             ),
             # **Complete Areas**
             Consumable(
-                name="ALL IN 1 RANDOM",
+                name="Sack of Boons",
                 description="Complete all trials in 1 random accessible area.",
+                inspiration="Dominion",
                 rarity=ConsumableRarity.super_epic,
                 types=["all_trials", "random_area"],
                 conditionals=[
                     ConsumableConditional(
-                        name="ALL IN 1 RANDOM ON AREA",
+                        name="Crisp Sack",
                         condition="On area completion",
+                        inspiration="Kirby: Right Back at Ya!",
                         types=["on_area"],
                     )
                 ],
             ),
             Consumable(
-                name="ALL IN 1 RANDOM WITH MOST",
+                name="Fantastical Bus",
                 description="Complete all trials in 1 accessible area with the most completed.",
+                inspiration="Jazztronauts",
                 rarity=ConsumableRarity.super_epic,
                 types=["all_trials", "random_area", "most_trials"],
                 conditionals=[
                     ConsumableConditional(
-                        name="ALL IN 1 RANDOM WITH MOST ON AREA",
+                        name="Shuttle Bus",
                         condition="On area completion",
                         types=["on_area"],
                     )
