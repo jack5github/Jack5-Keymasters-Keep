@@ -27,7 +27,7 @@ MAX_RARITY: int = max([rarity.value for rarity in ConsumableRarity])
 
 try:  # Archipelago imports are done here to support running this script as main
     import Options  # pyright: ignore[reportMissingImports]
-    import Utils  # pyright: ignore[reportMissingImports]
+    from schema import Optional, Or, Schema
     from ..enums import (  # pyright: ignore[reportMissingImports]
         KeymastersKeepGamePlatforms,
     )
@@ -64,19 +64,31 @@ try:  # Archipelago imports are done here to support running this script as main
         display_name: str = "Consumables Banned Types"
         default: list[str] = ["on_hint", "on_shop"]
 
-    # TODO: Accept a true list of dictionaries as opposed to a string
-    class ConsumablesCustomConsumables(Options.FreeText):
+    class ConsumablesCustom(Options.OptionDict):
         """
-        YAML lists of user-made consumables to add to the game, passed as strings. Custom consumables obey the `consumables_min_rarity`, `consumables_max_rarity` and `consumables_banned_types` options. Each item in a YAML list should be a dictionary with the following keys:
+        A dictionary of custom content to add to the implementation. Currently accepts a list of consumables under the key `consumables`, which obey the `consumables_min_rarity`, `consumables_max_rarity` and `consumables_banned_types` options, each of which is expected to have the following keys:
             - `name` (str) - The name of the consumable.
             - `description` (str) - The description of the consumable.
-            - `rarity` (str | int) - The rarity of the consumable, as it is represented in the `ConsumableRarity` enum.
-            - `types` (list[str]): The types of the consumable, used in filtering. Defaults to None.
-            - `creators` (list[str]) - The people that came up with the idea for the consumable.
+            - `rarity` (str | int, optional) - The rarity of the consumable, as it is represented in the `ConsumableRarity` enum. Defaults to 0.
+            - `types` (list[str], optional): The types of the consumable, used in filtering. Defaults to [].
+            - `creators` (str | list[str], optional) - The people that came up with the idea for the consumable. Defaults to "Custom".
         """
 
         display_name: str = "Consumables Custom Consumables"
-        default: str = "[]"
+        schema: Schema = Schema(
+            {
+                "consumables": [
+                    {
+                        "name": str,
+                        "description": str,
+                        Optional("rarity"): Or(str, int),
+                        Optional("types"): list[str],
+                        Optional("creators"): Or(str, list[str]),
+                    }
+                ]
+            }
+        )
+        default: dict[str, Any] = {"consumables": []}
 
     class ConsumablesShowNames(Options.DefaultOnToggle):
         """
@@ -115,7 +127,7 @@ class ConsumablesArchipelagoOptions:
         consumables_min_rarity: ConsumablesMinRarity
         consumables_max_rarity: ConsumablesMaxRarity
         consumables_banned_types: ConsumablesBannedTypes
-        consumables_custom_consumables: ConsumablesCustomConsumables
+        consumables_custom: ConsumablesCustom
         consumables_show_names: ConsumablesShowNames
         consumables_show_rarities: ConsumablesShowRarities
         consumables_show_creators: ConsumablesShowCreators
@@ -135,7 +147,7 @@ class Consumable:
         rarity: ConsumableRarity,
         types: list[str],
         inspiration: str | None = None,
-        creators: list[str] = ["Jack5"],
+        creators: str | list[str] = "Jack5",
         conditionals: list[ConsumableConditional] | None = None,
     ) -> None:
         """
@@ -147,15 +159,20 @@ class Consumable:
             rarity (ConsumableRarity): The rarity of the consumable.
             types (list[str]): The types of the consumable, used in filtering.
             inspiration (str | None, optional): The inspiration for the consumable. Defaults to None.
-            creators (list[str]): The people that came up with the idea for the consumable. Defaults to ["Jack5"].
+            creators (str | list[str]): The people that came up with the idea for the consumable. Defaults to "Jack5".
             conditionals (list[ConsumableConditional] | None, optional): Conditionals related to the consumable that form new consumables. Defaults to None.
+
+        Raises:
+            ValueError: If the consumable has an empty creators list.
         """
         self.name: str = name
         self.description: str = description
         self.rarity: ConsumableRarity = rarity
         self.types: list[str] = types
         self.inspiration: str | None = inspiration
-        self.creators: list[str] = creators
+        if len(creators) == 0:
+            raise ValueError(f"Consumable {name!r} has empty creators list")
+        self.creators: str | list[str] = creators
         self.conditionals: list[ConsumableConditional] | None = conditionals
 
     def __str__(self, show_rarity: bool, show_name: bool, show_creators: bool) -> str:
@@ -177,7 +194,7 @@ class Consumable:
         if show_rarity:
             consumable_str += f" [{self.rarity.value}]"
         if show_creators:
-            consumable_str += f" | {', '.join(self.creators)}"
+            consumable_str += f" | {self.creators if isinstance(self.creators, str) else ', '.join(self.creators)}"
         return consumable_str
 
 
@@ -205,6 +222,9 @@ class ConsumableConditional:
             rarity (ConsumableRarity | None, optional): The rarity of the consumable. This is generally lower than the parent consumable due to the need to fulfil the condition. If None, it is inherited from the parent consumable. Defaults to None.
             inspiration (str | None, optional): The inspiration for the consumable. Defaults to None.
             creators (list[str] | None, optional): The people that came up with the idea for the consumable. If None, they are inherited from the parent consumable. Defaults to None.
+
+        Raises:
+            ValueError: If the consumable has an empty creators list.
         """
         self.name: str = name
         self.condition: str = condition
@@ -212,7 +232,9 @@ class ConsumableConditional:
         self.types: list[str] = types
         self.rarity: ConsumableRarity | None = rarity
         self.inspiration: str | None = inspiration
-        self.creators: list[str] | None = creators
+        if creators is not None and len(creators) == 0:
+            raise ValueError(f"Conditional consumable {name!r} has empty creators list")
+        self.creators: str | list[str] | None = creators
 
     def __str__(self, show_rarity: bool, show_name: bool, show_creators: bool) -> str:
         """
@@ -233,7 +255,7 @@ class ConsumableConditional:
         if self.rarity is not None and show_rarity:
             consumable_str += f" [{self.rarity.value}]"
         if self.creators is not None and show_creators:
-            consumable_str += f" | {', '.join(self.creators)}"
+            consumable_str += f" | {self.creators if isinstance(self.creators, str) else ', '.join(self.creators)}"
         return consumable_str
 
 
@@ -613,8 +635,8 @@ class ConsumablesGame(Game):
                 conditionals=[
                     ConsumableConditional(
                         name="BESIDE ALL IN 1 CHOSEN ON TRIAL",
-                        rarity=ConsumableRarity.very_rare,
                         condition="On trial completion, given the area is the same",
+                        rarity=ConsumableRarity.very_rare,
                         types=["on_trial", "in_same_area"],
                     ),
                     ConsumableConditional(
@@ -921,13 +943,13 @@ class ConsumablesGame(Game):
 
         def cons_allowed(cons: Consumable) -> bool:
             """
-            Checks that the consumable is allowed to appear in the game according to the `consumables_min_rarity`, `consumables_max_rarity` and `consumables_banned_types` options.
+            Checks that the consumable is allowed to appear in the implementation according to the `consumables_min_rarity`, `consumables_max_rarity` and `consumables_banned_types` options.
 
             Args:
                 cons (Consumable): The consumable to check.
 
             Returns:
-                bool: Whether the consumable is allowed to appear in the game.
+                bool: Whether the consumable is allowed to appear in the implementation.
             """
             return (
                 cons.rarity.value
@@ -961,8 +983,10 @@ class ConsumablesGame(Game):
                 if cons_allowed(cond_cons):
                     consumables_list.append(cond_cons)
         # Load custom consumables from option
-        ccons_parsed: list[dict[str, Any]] = Utils.parse_yaml(
-            self.archipelago_options.consumables_custom_consumables.value
+        ccons_parsed: list[dict[str, Any]] = (
+            self.archipelago_options.consumables_custom.value["consumables"]
+            if "consumables" in self.archipelago_options.consumables_custom.value.keys()
+            else []
         )
         if not isinstance(ccons_parsed, list):
             raise TypeError("Custom consumables is not a list")
@@ -979,51 +1003,52 @@ class ConsumablesGame(Game):
                 raise TypeError(
                     f"Custom consumable #{index + 1} has no description or description is not a string: {ccons!r}"
                 )
-            if "rarity" not in ccons or (
-                not isinstance(ccons["rarity"], str)
-                and not isinstance(ccons["rarity"], int)
-            ):
-                raise TypeError(
-                    f"Custom consumable #{index + 1} has no rarity or rarity is not a string or integer: {ccons!r}"
-                )
-            if (
-                "types" not in ccons
-                or not isinstance(ccons["types"], list)
-                or not all(isinstance(t, str) for t in ccons["types"])
-            ):
-                raise TypeError(
-                    f"Custom consumable #{index + 1} has no types or types is not a list of strings: {ccons!r}"
-                )
-            if (
-                "creators" not in ccons
-                or not isinstance(ccons["creators"], list)
-                or not all(isinstance(c, str) for c in ccons["creators"])
-            ):
-                raise TypeError(
-                    f"Custom consumable #{index + 1} has no creators or creators is not a list of strings: {ccons!r}"
-                )
-            rarity: ConsumableRarity
-            if isinstance(ccons["rarity"], str):
-                try:
-                    rarity = ConsumableRarity(
-                        next(
-                            c.value
-                            for c in ConsumableRarity
-                            if c.name == ccons["rarity"]
+            rarity: ConsumableRarity = ConsumableRarity.common
+            if "rarity" in ccons.keys():
+                if isinstance(ccons["rarity"], str):
+                    try:
+                        rarity = ConsumableRarity(
+                            next(
+                                c.value
+                                for c in ConsumableRarity
+                                if c.name == ccons["rarity"]
+                            )
                         )
+                    except StopIteration:
+                        raise ValueError(
+                            f"Custom consumable #{index + 1} has invalid rarity {ccons!r}"
+                        )
+                elif isinstance(ccons["rarity"], int):
+                    rarity = ConsumableRarity(ccons["rarity"])
+                else:
+                    raise TypeError(
+                        f"Custom consumable #{index + 1} rarity is not a string or integer: {ccons!r}"
                     )
-                except StopIteration:
-                    raise ValueError(
-                        f"Custom consumable #{index + 1} has an invalid rarity: {ccons!r}"
+            types: list[str] = []
+            if "types" in ccons.keys():
+                if not isinstance(ccons["types"], list) or not all(
+                    isinstance(t, str) for t in ccons["types"]
+                ):
+                    raise TypeError(
+                        f"Custom consumable #{index + 1} types are not a list of strings: {ccons!r}"
                     )
-            else:  # int
-                rarity = ConsumableRarity(ccons["rarity"])
+                types = ccons["types"]
+            creators: str | list[str] = "Custom"
+            if "creators" in ccons.keys():
+                if (not isinstance(ccons["creators"], str)) and (
+                    not isinstance(ccons["creators"], list)
+                    or not all(isinstance(c, str) for c in ccons["creators"])
+                ):
+                    raise TypeError(
+                        f"Custom consumable #{index + 1} creators are not a string or list of strings: {ccons!r}"
+                    )
+                creators = ccons["creators"]
             ccons_cons: Consumable = Consumable(
                 name=ccons["name"],
                 description=ccons["description"],
                 rarity=rarity,
-                types=ccons["types"],
-                creators=ccons["creators"],
+                types=types,
+                creators=creators,
             )
             if cons_allowed(ccons_cons):
                 consumables_list.append(ccons_cons)
