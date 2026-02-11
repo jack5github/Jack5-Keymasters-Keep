@@ -314,9 +314,8 @@ class ConsumablesGame(Game):
                 types=["chosen_trial", "any_areas", "trial_adjustment"],
             ),
             Consumable(
-                name="Caustic Lightning Rod",
+                name="Self-Changing Oil",
                 description="If 1 trial is incomplete after 12 hours, complete it.",
-                inspiration="Evaporate: Acid Rain",
                 rarity=ConsumableRarity.uncommon,
                 types=[
                     "chosen_trial",
@@ -327,8 +326,9 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="Multi-Lightning Rod",
+                name="Self-Cleaning Car",
                 description="If up to 2 trials are both incomplete after 12 hours, complete them.",
+                inspiration="RV There Yet?",
                 rarity=ConsumableRarity.uncommon,
                 types=[
                     "chosen_trial",
@@ -339,8 +339,9 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="1 IN 1 HOUR",
+                name="Caustic Lightning Rod",
                 description="If 1 trial is incomplete after 1 hour, complete it.",
+                inspiration="Evaporate: Acid Rain",
                 rarity=ConsumableRarity.rare,
                 types=[
                     "chosen_trial",
@@ -351,7 +352,7 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="2 IN 1 HOUR",
+                name="Multi-Lightning Rod",
                 description="If up to 2 trials are both incomplete after 1 hour, complete them.",
                 rarity=ConsumableRarity.rare,
                 types=[
@@ -523,7 +524,7 @@ class ConsumablesGame(Game):
                 types=["random_trial", "chosen_area"],
                 conditionals=[
                     ConsumableConditional(
-                        name="2 RANDOM IN 1 CHOSEN ON AREA",
+                        name="Gattling Projectile",
                         condition="On area completion",
                         types=["on_area"],
                     ),
@@ -535,7 +536,7 @@ class ConsumablesGame(Game):
                         types=["on_trial", "in_same_area"],
                     ),
                     ConsumableConditional(
-                        name="2 RANDOM IN 1 CHOSEN ON SHOP",
+                        name="Gem-Encrusted Projectile",
                         condition="On shop item purchase",
                         types=["on_shop"],
                     ),
@@ -562,7 +563,7 @@ class ConsumablesGame(Game):
                         types=["on_trial", "in_same_area"],
                     ),
                     ConsumableConditional(
-                        name="1 EDGES IN 1 CHOSEN ON SHOP",
+                        name="Golden Lasso",
                         condition="On shop item purchase",
                         types=["on_shop"],
                     ),
@@ -622,7 +623,7 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="BESIDE 5 IN 2 CHOSEN",
+                name="The Lighthouse Window",
                 description="Complete the trials right beside all 5-trial chains in up to 2 accessible areas.",
                 rarity=ConsumableRarity.very_rare,
                 types=["trials_beside", "chosen_area"],
@@ -697,14 +698,14 @@ class ConsumablesGame(Game):
                 types=["chosen_trial", "any_areas"],
             ),
             Consumable(
-                name="Weapons Marketplace",
+                name="Pop-up Marketplace",
                 description="Complete 1 trial each in all accessible areas.",
                 inspiration="Garry's Mod",
                 rarity=ConsumableRarity.super_epic,
                 types=["chosen_trial", "all_areas"],
                 conditionals=[
                     ConsumableConditional(
-                        name="1 CHOSEN IN ALL ON AREA",
+                        name="Market Expansion",
                         condition="On area completion",
                         types=["on_area"],
                     ),
@@ -724,7 +725,7 @@ class ConsumablesGame(Game):
             ),
             # **Complete Hinted Trials**
             Consumable(
-                name="FILLER HINT IN 1 TRIAL",
+                name="Conscious Harmoniser",
                 description="If a filler item is hinted for 1 accessible trial, complete it.",
                 rarity=ConsumableRarity.common,
                 types=[
@@ -732,6 +733,19 @@ class ConsumablesGame(Game):
                     "filler_hint",
                     "chosen_trial",
                     "any_areas",
+                    "conditional",
+                ],
+            ),
+            Consumable(
+                name="Conscious Amplifier",
+                description="If any filler items are hinted for 1 accessible area, complete them.",
+                inspiration="The Witness",
+                rarity=ConsumableRarity.uncommon,
+                types=[
+                    "on_hint",
+                    "filler_hint",
+                    "all_trials",
+                    "chosen_area",
                     "conditional",
                 ],
             ),
@@ -748,66 +762,6 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="PROGRESSION HINT IN 1 TRIAL",
-                description="If a progression item is hinted for 1 accessible trial, complete it.",
-                rarity=ConsumableRarity.common,
-                types=[
-                    "on_hint",
-                    "progression_hint",
-                    "chosen_trial",
-                    "any_areas",
-                    "conditional",
-                ],
-            ),
-            Consumable(
-                name="ANY HINT IN 1 TRIAL",
-                description="If any item is hinted for 1 accessible trial, complete it.",
-                rarity=ConsumableRarity.common,
-                types=[
-                    "on_hint",
-                    "any_hint",
-                    "chosen_trial",
-                    "any_areas",
-                    "conditional",
-                ],
-            ),
-            Consumable(
-                name="ANY HINTS IN 2 TRIALS",
-                description="If any item is hinted for up to 2 accessible trials, complete them.",
-                rarity=ConsumableRarity.common,
-                types=[
-                    "on_hint",
-                    "any_hint",
-                    "chosen_trial",
-                    "any_areas",
-                    "conditional",
-                ],
-            ),
-            Consumable(
-                name="ANY HINTS IN 5 TRIALS",
-                description="If any item is hinted for up to 5 accessible trials, complete them.",
-                rarity=ConsumableRarity.epic,
-                types=[
-                    "on_hint",
-                    "any_hint",
-                    "chosen_trial",
-                    "any_areas",
-                    "conditional",
-                ],
-            ),
-            Consumable(
-                name="FILLER HINTS IN 1 AREA",
-                description="If any filler items are hinted for 1 accessible area, complete them.",
-                rarity=ConsumableRarity.uncommon,
-                types=[
-                    "on_hint",
-                    "filler_hint",
-                    "all_trials",
-                    "chosen_area",
-                    "conditional",
-                ],
-            ),
-            Consumable(
                 name="TRAP HINTS IN 1 AREA",
                 description="If any trap items are hinted for 1 accessible area, complete them.",
                 rarity=ConsumableRarity.uncommon,
@@ -820,6 +774,18 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
+                name="PROGRESSION HINT IN 1 TRIAL",
+                description="If a progression item is hinted for 1 accessible trial, complete it.",
+                rarity=ConsumableRarity.common,
+                types=[
+                    "on_hint",
+                    "progression_hint",
+                    "chosen_trial",
+                    "any_areas",
+                    "conditional",
+                ],
+            ),
+            Consumable(
                 name="PROGRESSION HINTS IN 1 AREA",
                 description="If any progression items are hinted for 1 accessible area, complete them.",
                 rarity=ConsumableRarity.uncommon,
@@ -828,6 +794,43 @@ class ConsumablesGame(Game):
                     "progression_hint",
                     "all_trials",
                     "chosen_area",
+                    "conditional",
+                ],
+            ),
+            Consumable(
+                name="Psychic Lock-On",
+                description="If any item is hinted for 1 accessible trial, complete it.",
+                rarity=ConsumableRarity.common,
+                types=[
+                    "on_hint",
+                    "any_hint",
+                    "chosen_trial",
+                    "any_areas",
+                    "conditional",
+                ],
+            ),
+            Consumable(
+                name="Psychic Telegraph",
+                description="If any item is hinted for up to 2 accessible trials, complete them.",
+                rarity=ConsumableRarity.common,
+                types=[
+                    "on_hint",
+                    "any_hint",
+                    "chosen_trial",
+                    "any_areas",
+                    "conditional",
+                ],
+            ),
+            Consumable(
+                name="Psychic Wildfire",
+                description="If any item is hinted for up to 5 accessible trials, complete them.",
+                inspiration="EarthBound",
+                rarity=ConsumableRarity.epic,
+                types=[
+                    "on_hint",
+                    "any_hint",
+                    "chosen_trial",
+                    "any_areas",
                     "conditional",
                 ],
             ),
@@ -887,23 +890,24 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="ALL IN 1 RANDOM WITH LEAST",
+                name="Storm-Summoning Ritual",
                 description="Complete all trials in 1 accessible area with the least completed.",
+                inspiration="DX-Ball 2: 20th Anniversary Edition",
                 rarity=ConsumableRarity.super_epic,
                 types=["all_trials", "random_area", "least_trials"],
                 conditionals=[
                     ConsumableConditional(
-                        name="ALL IN 1 RANDOM WITH LEAST ON AREA",
+                        name="Blood-Bonding Ritual",
                         condition="On area completion",
+                        inspiration="Hunter: The Parenting",
                         rarity=ConsumableRarity.epic,
                         types=["on_area"],
                     )
                 ],
             ),
             Consumable(
-                name="Ever-Unravelling Scroll",
+                name="Ever-Unrolling Rug",
                 description="Complete all trials in 1 accessible area.",
-                inspiration="Vampire Survivors",
                 rarity=ConsumableRarity.super_epic,
                 types=["all_trials", "chosen_area"],
                 conditionals=[
@@ -913,8 +917,9 @@ class ConsumablesGame(Game):
                         types=["on_area"],
                     ),
                     ConsumableConditional(
-                        name="ALL IN 1 CHOSEN ON TRIAL",
+                        name="Ever-Unfolding Scroll",
                         condition="On trial completion, given the area is the same",
+                        inspiration="Vampire Survivors",
                         rarity=ConsumableRarity.epic,
                         types=["on_trial", "in_same_area"],
                     ),
