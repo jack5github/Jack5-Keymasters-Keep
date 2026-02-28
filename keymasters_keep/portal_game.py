@@ -16,6 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
 from Options import OptionCounter  # pyright: ignore[reportMissingImports]
+from types import EllipsisType
 from ..enums import KeymastersKeepGamePlatforms  # pyright: ignore[reportMissingImports]
 from ..game import Game  # pyright: ignore[reportMissingImports]
 from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
@@ -32,6 +33,7 @@ class PortalWeights(OptionCounter):
     default: dict[str, int] = {
         "complete_chamber": 5,
         "cameras_in_chamber": 5,
+        "fizzle_prop_in_chamber": 5,
         "dinosaur_in_chamber": 5,
         "escape_sequence": 5,
         "glados": 1,
@@ -56,6 +58,24 @@ class PortalArchipelagoOptions:
     portal_challenge_weights: PortalChallengeWeights
 
 
+@dataclass
+class PortalChamber:
+    """
+    The data for a Portal chamber.
+
+    Args:
+        chapter (int): The chapter number the chamber is in.
+        cameras (int): The number of cameras in the chamber that can be detached with the Portal Gun.
+        fizzlable (list[str] | EllipsisType | None, optional): The props that can be brought to the fizzler in the chamber. "radio" is always added to this list, and "camera" if there are detachable cameras. If ..., no props are fizzlable due to there being no fizzler. Defaults to None.
+        advanced (bool, optional): Whether the chamber has an advanced version and is playable as a challenge. Defaults to False.
+    """
+
+    chapter: int
+    cameras: int
+    fizzlable: list[str] | EllipsisType | None = None
+    advanced: bool = False
+
+
 class PortalGame(Game):
     """
     Portal is a single player game from Valve. Set in the mysterious Aperture Science Laboratories, Portal has been called one of the most innovative new games on the horizon and will offer gamers hours of unique gameplay.
@@ -74,48 +94,91 @@ class PortalGame(Game):
     options_cls: type[PortalArchipelagoOptions] = PortalArchipelagoOptions
 
     @cached_property
-    def chapters_and_cameras(self) -> list[tuple[int, int]]:
+    def chambers_base(self) -> list[PortalChamber]:
         # Enumerating through this list will give the chamber numbers
         return [
-            (1, 0),
-            (1, 0),
-            (1, 3),
-            (1, 3),
-            (2, 2),
-            (2, 3),
-            (2, 0),
-            (2, 0),
-            (3, 0),
-            (3, 0),
-            (4, 1),
-            (4, 1),
-            (4, 0),
-            (5, 3),
-            (6, 0),
-            (7, 5),
-            (8, 4),
-            (9, 2),
-            (10, 2),
-            (11, 3),
+            PortalChamber(1, 0, ["clipboard", "mug"]),  # 00
+            PortalChamber(1, 0),  # 01
+            PortalChamber(1, 3),  # 02
+            PortalChamber(1, 3),  # 03
+            PortalChamber(2, 2),  # 04
+            PortalChamber(2, 3),  # 05
+            PortalChamber(2, 0),  # 06
+            PortalChamber(2, 0),  # 07
+            PortalChamber(3, 0),  # 08
+            PortalChamber(3, 0, ["cube"]),  # 09
+            PortalChamber(4, 1),  # 10
+            PortalChamber(4, 1),  # 11
+            PortalChamber(4, 0, ["cube"]),  # 12
+            PortalChamber(5, 3, ["cube"], advanced=True),  # 13
+            PortalChamber(6, 0, advanced=True),  # 14
+            PortalChamber(7, 5, ["cube"], advanced=True),  # 15
+            PortalChamber(  # 16
+                8,
+                4,
+                # Cubes and turrets are duplicated in this list to be equal with odd props
+                [
+                    "beans can",
+                    "bucket",
+                    "computer case",
+                    "cube",
+                    "cube",
+                    "cube",
+                    "cube",
+                    "cube",
+                    "milk carton",
+                    "mug",
+                    "pliers",
+                    "pot",
+                    "turret",
+                    "turret",
+                    "turret",
+                    "turret",
+                    "turret",
+                    "wall blocks",
+                    "water jug",
+                    "wrench",
+                ],
+                advanced=True,
+            ),
+            PortalChamber(9, 2, ["beans can", "milk carton"], advanced=True),  # 17
+            PortalChamber(  # 18
+                10,
+                2,
+                ["beans can", "bucket", "computer case", "milk carton", "pot"],
+                advanced=True,
+            ),
+            PortalChamber(11, 3, ...),  # 19
         ]
 
     def chambers(self) -> list[str]:
-        return [
-            f"Test Chamber {index:02d}"
-            for index in range(len(self.chapters_and_cameras))
-        ]
+        return [f"Test Chamber {index:02d}" for index in range(len(self.chambers_base))]
 
     def complete_chamber_objectives(self) -> list[str]:
         return [
-            f"Test Chamber {index:02d} starting from Chapter {chapter}"
-            for index, (chapter, _) in enumerate(self.chapters_and_cameras)
+            f"Test Chamber {index:02d} starting from Chapter {chamber.chapter}"
+            for index, chamber in enumerate(self.chambers_base)
         ]
 
     def detach_camera_objectives(self) -> list[str]:
+        return [
+            f"{chamber.cameras} {"camera" if chamber.cameras == 1 else "cameras"} in Test Chamber {index:02d}"
+            for index, chamber in enumerate(self.chambers_base)
+            if chamber.cameras > 0
+        ]
+
+    def fizzle_prop_objectives(self) -> list[str]:
         objectives: list[str] = []
-        for index, (_, cameras) in enumerate(self.chapters_and_cameras):
-            if cameras > 0:
-                objectives.append(f"{cameras} cameras from Test Chamber {index:02d}")
+        for index, chamber in enumerate(self.chambers_base):
+            if chamber.fizzlable is ...:
+                continue
+            if chamber.fizzlable is None:
+                chamber.fizzlable = []
+            chamber.fizzlable.append("radio")
+            if chamber.cameras > 0:
+                chamber.fizzlable.append("camera")
+            for prop in chamber.fizzlable:
+                objectives.append(f"{prop} in Test Chamber {index:02d}")
         return objectives
 
     @staticmethod
@@ -141,20 +204,18 @@ class PortalGame(Game):
             "GLaDOS' chamber",
         ]
 
-    @cached_property
-    def advanced_and_challenge_chambers(self) -> range:
-        return range(13, 18 + 1)
-
     def advanced_chambers(self) -> list[str]:
         return [
             f"Test Chamber {index:02d}: Advanced"
-            for index in self.advanced_and_challenge_chambers
+            for index, chamber in enumerate(self.chambers_base)
+            if chamber.advanced
         ]
 
     def challenge_chambers(self) -> list[str]:
         return [
             f"Test Chamber {index:02d}"
-            for index in self.advanced_and_challenge_chambers
+            for index, chamber in enumerate(self.chambers_base)
+            if chamber.advanced
         ]
 
     def challenges(self) -> list[str]:
@@ -179,37 +240,39 @@ class PortalGame(Game):
             "Die by descending into the fire pit",
             "Die by GLaDOS' neurotoxin",
             "Die by goo",
-            "Explore Rattmann's den on Test Chamber 16",
-            "Explore Rattmann's den on Test Chamber 17",
-            "Explore Rattmann's den on Test Chamber 18",
+            "Explore Rattmann's den in Test Chamber 16",
+            "Explore Rattmann's den in Test Chamber 17",
+            "Explore Rattmann's den in Test Chamber 18",
             "Explore one of Rattmann's dens during the escape sequence",
             "Flush the toilet within the Relaxation Vault",
             "Incinerate the Companion Cube",
-            "Incinerate yourself on Test Chamber 17",
-            "Incinerate yourself within GLaDOS' Chamber",
-            "Kill all turrets on Test Chamber 16",
+            "Incinerate yourself in Test Chamber 17",
+            "Incinerate yourself in GLaDOS' Chamber",
+            "Kill all turrets in Test Chamber 16",
+            "Listen to all of a personality core's voice lines"
             "Listen to the developer commentary for a chapter",
         ]
 
     @staticmethod
     def bonus_objectives_difficult() -> list[str]:
         return [
-            "Become softlocked on Test Chamber 12",
+            "Become softlocked in Test Chamber 12",
             "Break the glass window with a prop during the escape sequence",
             "Complete Test Chamber 09 without using the portal gun",
             "Complete Test Chamber 13 without catching the High Energy Pellet",
             "Complete Test Chamber 16 without killing any turrets",
-            "Fling to the exit elevator on Test Chamber 07",
+            "Fling to the exit elevator in Test Chamber 07",
+            "Get hit by a falling prop from the junk dropper in Test Chamber 16",
             "Keep the two turrets lowered during the escape sequence alive",
             "Leave Test Chamber 00 with the exit door closed",
             "Perform the portal standing glitch",
             "Skip breaking the pipe during the escape sequence",
-            "Skip past the Complimentary Victory Lift on Test Chamber 06",
-            "Skip past the Complimentary Victory Lift on Test Chamber 14",
-            "Skip past the Complimentary Victory Lift on Test Chamber 15",
-            "Throw the cube onto the button from up high on Test Chamber 12",
-            "Trap yourself in the High Energy Pellet catcher on Test Chamber 15",
-            "Trap yourself in the High Energy Pellet catcher on Test Chamber 18",
+            "Skip past the Complimentary Victory Lift in Test Chamber 06",
+            "Skip past the Complimentary Victory Lift in Test Chamber 14",
+            "Skip past the Complimentary Victory Lift in Test Chamber 15",
+            "Throw the cube onto the button from up high in Test Chamber 12",
+            "Trap yourself within the High Energy Pellet catcher in Test Chamber 15",
+            "Trap yourself within the High Energy Pellet catcher in Test Chamber 18",
         ]
 
     @staticmethod
@@ -243,7 +306,14 @@ class PortalGame(Game):
                 weight=weights["cameras_in_chamber"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Find radio dinosaur noise on CHAMBER",
+                label="Fizzle PROP",
+                data={"PROP": (self.fizzle_prop_objectives, 1)},
+                is_time_consuming=False,
+                is_difficult=False,
+                weight=weights["fizzle_prop_in_chamber"] * factor,
+            ),
+            GameObjectiveTemplate(
+                label="Find radio dinosaur noise in CHAMBER",
                 data={"CHAMBER": (self.chambers, 1)},
                 is_time_consuming=False,
                 # While not time consuming, some of the radio dinosaur noises require bringing the radio to a very specific location, which would be difficult for normal players
@@ -272,7 +342,7 @@ class PortalGame(Game):
                 weight=weights["complete_chamber_advanced"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Get 3rd place in CHALLENGE on CHAMBER",
+                label="Get 3rd place in CHALLENGE for CHAMBER",
                 data={
                     "CHALLENGE": (self.challenges, 1),
                     "CHAMBER": (self.challenge_chambers, 1),
@@ -282,7 +352,7 @@ class PortalGame(Game):
                 weight=int(weights["challenges"] * factor / 3),
             ),
             GameObjectiveTemplate(
-                label="Get 2nd place in CHALLENGE on CHAMBER",
+                label="Get 2nd place in CHALLENGE for CHAMBER",
                 data={
                     "CHALLENGE": (self.challenges, 1),
                     "CHAMBER": (self.challenge_chambers, 1),
@@ -292,7 +362,7 @@ class PortalGame(Game):
                 weight=int(weights["challenges"] * factor / 3),
             ),
             GameObjectiveTemplate(
-                label="Get 1st place in CHALLENGE on CHAMBER",
+                label="Get 1st place in CHALLENGE for CHAMBER",
                 data={
                     "CHALLENGE": (self.challenges, 1),
                     "CHAMBER": (self.challenge_chambers, 1),
