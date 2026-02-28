@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
 from Options import OptionCounter  # pyright: ignore[reportMissingImports]
-from typing import EllipsisType
+from types import EllipsisType
 from ..enums import KeymastersKeepGamePlatforms  # pyright: ignore[reportMissingImports]
 from ..game import Game  # pyright: ignore[reportMissingImports]
 from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
@@ -33,7 +33,7 @@ class PortalWeights(OptionCounter):
     default: dict[str, int] = {
         "complete_chamber": 5,
         "cameras_in_chamber": 5,
-        "fizzle_props_in_chamber": 5,
+        "fizzle_prop_in_chamber": 5,
         "dinosaur_in_chamber": 5,
         "escape_sequence": 5,
         "glados": 1,
@@ -60,6 +60,16 @@ class PortalArchipelagoOptions:
 
 @dataclass
 class PortalChamber:
+    """
+    The data for a Portal chamber.
+
+    Args:
+        chapter (int): The chapter number the chamber is in.
+        cameras (int): The number of cameras in the chamber that can be detached with the Portal Gun.
+        fizzlable (list[str] | EllipsisType | None, optional): The props that can be brought to the fizzler in the chamber. "radio" is always added to this list, and "camera" if there are detachable cameras. If ..., no props are fizzlable due to there being no fizzler. Defaults to None.
+        advanced (bool, optional): Whether the chamber has an advanced version and is playable as a challenge. Defaults to False.
+    """
+
     chapter: int
     cameras: int
     fizzlable: list[str] | EllipsisType | None = None
@@ -87,30 +97,62 @@ class PortalGame(Game):
     def chambers_base(self) -> list[PortalChamber]:
         # Enumerating through this list will give the chamber numbers
         return [
-            PortalChamber(1, 0, ["clipboard", "mug"]),
-            PortalChamber(1, 0),
-            PortalChamber(1, 3),
-            PortalChamber(1, 3),
-            PortalChamber(2, 2),
-            PortalChamber(2, 3),
-            PortalChamber(2, 0),
-            PortalChamber(2, 0),
-            PortalChamber(3, 0),
-            PortalChamber(3, 0, ["cube"]),
-            PortalChamber(4, 1),
-            PortalChamber(4, 1),
-            PortalChamber(4, 0, ["cube"]),
-            PortalChamber(5, 3, ["cube"], advanced=True),
-            PortalChamber(6, 0, advanced=True),
-            PortalChamber(7, 5, ["cube"], advanced=True),
-            # TODO: Get props found in Rattmann's den and junk dropper
-            PortalChamber(8, 4, ["cube", "turret"], advanced=True),
-            # TODO: Get props found in Rattmann's den
-            PortalChamber(9, 2, [], advanced=True),
-            # TODO: Get props found in Rattmann's den
-            PortalChamber(10, 2, [], advanced=True),
-            PortalChamber(11, 3, ...),
+            PortalChamber(1, 0, ["clipboard", "mug"]),  # 00
+            PortalChamber(1, 0),  # 01
+            PortalChamber(1, 3),  # 02
+            PortalChamber(1, 3),  # 03
+            PortalChamber(2, 2),  # 04
+            PortalChamber(2, 3),  # 05
+            PortalChamber(2, 0),  # 06
+            PortalChamber(2, 0),  # 07
+            PortalChamber(3, 0),  # 08
+            PortalChamber(3, 0, ["cube"]),  # 09
+            PortalChamber(4, 1),  # 10
+            PortalChamber(4, 1),  # 11
+            PortalChamber(4, 0, ["cube"]),  # 12
+            PortalChamber(5, 3, ["cube"], advanced=True),  # 13
+            PortalChamber(6, 0, advanced=True),  # 14
+            PortalChamber(7, 5, ["cube"], advanced=True),  # 15
+            PortalChamber(  # 16
+                8,
+                4,
+                # Cubes and turrets are duplicated in this list to be equal with odd props
+                [
+                    "beans can",
+                    "bucket",
+                    "computer case",
+                    "cube",
+                    "cube",
+                    "cube",
+                    "cube",
+                    "cube",
+                    "milk carton",
+                    "mug",
+                    "pliers",
+                    "pot",
+                    "turret",
+                    "turret",
+                    "turret",
+                    "turret",
+                    "turret",
+                    "wall blocks",
+                    "water jug",
+                    "wrench",
+                ],
+                advanced=True,
+            ),
+            PortalChamber(9, 2, ["beans can", "milk carton"], advanced=True),  # 17
+            PortalChamber(  # 18
+                10,
+                2,
+                ["beans can", "bucket", "computer case", "milk carton", "pot"],
+                advanced=True,
+            ),
+            PortalChamber(11, 3, ...),  # 19
         ]
+
+    def chambers(self) -> list[str]:
+        return [f"Test Chamber {index:02d}" for index in range(len(self.chambers_base))]
 
     def complete_chamber_objectives(self) -> list[str]:
         return [
@@ -121,7 +163,7 @@ class PortalGame(Game):
     def detach_camera_objectives(self) -> list[str]:
         return [
             f"{chamber.cameras} {"camera" if chamber.cameras == 1 else "cameras"} in Test Chamber {index:02d}"
-            for index, chamber in enumeate(self.chambers_base)
+            for index, chamber in enumerate(self.chambers_base)
             if chamber.cameras > 0
         ]
 
