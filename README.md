@@ -23,4 +23,5 @@ Below are links to the [Keymaster's Keep Codex](https://silasary.github.io/kmk_t
 - **[Portal (PC + PS3, SW, X360)](https://silasary.github.io/kmk_tools/games/portal_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/portal_game.py))
 - **[R.E.P.O. (PC)](https://silasary.github.io/kmk_tools/games/repo_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/repo_game.py))
 - **[Sanctum (PC)](https://silasary.github.io/kmk_tools/games/sanctum_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/sanctum_game.py))
+- **[Tomodachi Life (3DS)](https://silasary.github.io/kmk_tools/games/tomodachi_life_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/tomodachi_life_game.py))
 - **[Trivia Tricks (PC)](https://silasary.github.io/kmk_tools/games/trivia_tricks_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/trivia_tricks_game.py))
