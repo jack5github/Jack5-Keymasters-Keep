@@ -23,7 +23,7 @@ from Options import (  # pyright: ignore[reportMissingImports]
     OptionList,
     Toggle,
 )
-from typing import Literal
+from typing import Callable, Literal
 from ..enums import KeymastersKeepGamePlatforms  # pyright: ignore[reportMissingImports]
 from ..game import Game  # pyright: ignore[reportMissingImports]
 from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
@@ -138,14 +138,14 @@ class TLCost:
     The cost of a Tomodachi Life item in each currency.
 
     Args:
-        usd (float | None, optional): The cost in American dollars.
-        eur (float | None, optional): The cost in Euros.
-        gbp (float | None, optional): The cost in British pounds.
-        aud (float | None, optional): The cost in Australian dollars.
-        jpy (int | None, optional): The cost in Japanese yen.
-        krw (int | None, optional): The cost in South Korean won.
-        dollars (float | None, optional): The cost in dollars. This is shared between `usd`, `eur`, `gbp` and `aud` if they are not set.
-        scale (bool, optional): Whether `jpy` and `krw` should be 100 and 1000 times `dollars` respectively.
+        usd (float | None, optional): The cost in American dollars. Defaults to None.
+        eur (float | None, optional): The cost in Euros. Defaults to None.
+        gbp (float | None, optional): The cost in British pounds. Defaults to None.
+        aud (float | None, optional): The cost in Australian dollars. Defaults to None.
+        jpy (int | None, optional): The cost in Japanese yen. Defaults to None.
+        krw (int | None, optional): The cost in South Korean won. Defaults to None.
+        dollars (float | None, optional): The cost in dollars. This is shared between `usd`, `eur`, `gbp` and `aud` if they are not set. Defaults to None.
+        scale (bool, optional): Whether `jpy` and `krw` should be 100 and 1000 times `dollars` respectively. Defaults to False.
     """
 
     usd: float | None = None
@@ -160,6 +160,16 @@ class TLCost:
 
 @dataclass
 class TLItem:
+    """
+    An item from Tomodachi Life.
+
+    Args:
+        name (str | TLName): The name of the item.
+        cost (float | int | TLCost, optional): The cost of the item, which can specify what regions the item is available in. Defaults to 0.
+        region (Literal["NA", "EU", "JP", "KR"] | None, optional): The region in which the item is available, or None for all regions. Defaults to None.
+        trash (bool, optional): Whether the item is trash. Defaults to False.
+    """
+
     name: str | TLName
     cost: float | int | TLCost = 0
     region: Literal["NA", "EU", "JP", "KR"] | None = None
@@ -3020,30 +3030,23 @@ class TomodachiLifeGame(Game):
         Returns:
             list[str]: The weighted list of strings.
         """
-        print(f"Given {len(items)} items")
         # Get all items for the given region, also get min and max costs
         region_items: list[tuple[str, float]] = []
         min_cost: float = float("inf")
         max_cost: float = 0
         for item in items:
             if not self.is_item_in_region(item):
-                print(
-                    f"{item} is not in region {self.archipelago_options.tomodachi_life_region.value}"
-                )
                 continue
             item_name: str = self.get_item_name(item)
             item_cost: float | int | None = self.get_item_cost(item)
             if item_cost is None:
-                print(f"{item} has no cost")
                 continue
             region_items.append((item_name, item_cost))
             min_cost = min(min_cost, item_cost)
             max_cost = max(max_cost, item_cost)
-        print(f"Found {len(region_items)} items")
         # Duplicate items based on their costs, cheaper items appear more frequently
         cost_diff: float = max_cost - min_cost
         if cost_diff == 0:
-            print("Cost difference is 0")
             return [item[0] for item in region_items]
         weighted_items: list[str] = []
         max_weight: int = 4
@@ -3053,7 +3056,6 @@ class TomodachiLifeGame(Game):
             )
             for _ in range(item_weight):
                 weighted_items.append(item[0])
-        print(f"Created {len(weighted_items)} weighted items")
         return weighted_items
 
     def foods(self) -> list[str]:
@@ -3250,142 +3252,153 @@ class TomodachiLifeGame(Game):
             ),
         ]
         if len(self.archipelago_options.tomodachi_life_male_miis.value) > 0:
+
+            def get_male_data() -> tuple[Callable, int]:
+                return (
+                    lambda: self.archipelago_options.tomodachi_life_male_miis.value,
+                    1,
+                )
+
+            def get_male_weight(weight_key: str) -> int:
+                """
+                Gets the weight of Tomodachi Life objectives that require a named male Mii using the given weight key. Ensures that male and female objectives are balanced based on the total number of Miis.
+
+                Args:
+                    weight_key (str): The weight key.
+
+                Returns:
+                    int: The weight of the objective type.
+                """
+                return int(
+                    weights[weight_key]
+                    * factor
+                    * (
+                        len(self.archipelago_options.tomodachi_life_male_miis.value)
+                        / (
+                            len(self.archipelago_options.tomodachi_life_male_miis.value)
+                            + len(
+                                self.archipelago_options.tomodachi_life_female_miis.value
+                            )
+                        )
+                    )
+                )
+
             objectives.extend(
                 [
                     GameObjectiveTemplate(
                         label="Feed FOOD to MALE",
-                        data={
-                            "FOOD": (self.foods, 1),
-                            "MALE": (
-                                lambda: self.archipelago_options.tomodachi_life_male_miis.value,
-                                1,
-                            ),
-                        },
+                        data={"FOOD": (self.foods, 1), "MALE": get_male_data()},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_food"] * factor / 2),
+                        weight=get_male_weight("named_mii_food"),
                     ),
                     GameObjectiveTemplate(
                         label="Give MALE the INTERIOR interior",
-                        data={
-                            "MALE": (
-                                lambda: self.archipelago_options.tomodachi_life_male_miis.value,
-                                1,
-                            ),
-                            "INTERIOR": (self.interiors, 1),
-                        },
+                        data={"MALE": get_male_data(), "INTERIOR": (self.interiors, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_interior"] * factor / 2),
+                        weight=get_male_weight("named_mii_interior"),
                     ),
                     GameObjectiveTemplate(
                         label="Dress MALE in CLOTHES",
-                        data={
-                            "MALE": (
-                                lambda: self.archipelago_options.tomodachi_life_male_miis.value,
-                                1,
-                            ),
-                            "CLOTHES": (self.clothes, 1),
-                        },
+                        data={"MALE": get_male_data(), "CLOTHES": (self.clothes, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_clothes"] * factor / 2),
+                        weight=get_male_weight("named_mii_clothes"),
                     ),
                     GameObjectiveTemplate(
                         label="Gift GIFT to MALE",
-                        data={
-                            "GIFT": (self.gifts, 1),
-                            "MALE": (
-                                lambda: self.archipelago_options.tomodachi_life_male_miis.value,
-                                1,
-                            ),
-                        },
+                        data={"GIFT": (self.gifts, 1), "MALE": get_male_data()},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_gift"] * factor / 2),
+                        weight=get_male_weight("named_mii_gift"),
                     ),
                     GameObjectiveTemplate(
                         label="Give MALE the TREASURE treasure",
-                        data={
-                            "MALE": (
-                                lambda: self.archipelago_options.tomodachi_life_male_miis.value,
-                                1,
-                            ),
-                            "TREASURE": (self.treasures, 1),
-                        },
+                        data={"MALE": get_male_data(), "TREASURE": (self.treasures, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_treasure"] * factor / 2),
+                        weight=get_male_weight("named_mii_treasure"),
                     ),
                 ]
             )
         if len(self.archipelago_options.tomodachi_life_female_miis.value) > 0:
+
+            def get_female_data() -> tuple[Callable, int]:
+                return (
+                    lambda: self.archipelago_options.tomodachi_life_female_miis.value,
+                    1,
+                )
+
+            def get_female_weight(weight_key: str) -> int:
+                """
+                Gets the weight of Tomodachi Life objectives that require a named female Mii using the given weight key. Ensures that male and female objectives are balanced based on the total number of Miis.
+
+                Args:
+                    weight_key (str): The weight key.
+
+                Returns:
+                    int: The weight of the objective type.
+                """
+                return int(
+                    weights[weight_key]
+                    * factor
+                    * (
+                        len(self.archipelago_options.tomodachi_life_female_miis.value)
+                        / (
+                            len(self.archipelago_options.tomodachi_life_male_miis.value)
+                            + len(
+                                self.archipelago_options.tomodachi_life_female_miis.value
+                            )
+                        )
+                    )
+                )
+
             objectives.extend(
                 [
                     GameObjectiveTemplate(
                         label="Feed FOOD to FEMALE",
-                        data={
-                            "FOOD": (self.foods, 1),
-                            "FEMALE": (
-                                lambda: self.archipelago_options.tomodachi_life_female_miis.value,
-                                1,
-                            ),
-                        },
+                        data={"FOOD": (self.foods, 1), "FEMALE": get_female_data()},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_food"] * factor / 2),
+                        weight=get_female_weight("named_mii_food"),
                     ),
                     GameObjectiveTemplate(
                         label="Give FEMALE the INTERIOR interior",
                         data={
-                            "FEMALE": (
-                                lambda: self.archipelago_options.tomodachi_life_female_miis.value,
-                                1,
-                            ),
+                            "FEMALE": get_female_data(),
                             "INTERIOR": (self.interiors, 1),
                         },
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_interior"] * factor / 2),
+                        weight=get_female_weight("named_mii_interior"),
                     ),
                     GameObjectiveTemplate(
                         label="Dress FEMALE in CLOTHES",
                         data={
-                            "FEMALE": (
-                                lambda: self.archipelago_options.tomodachi_life_female_miis.value,
-                                1,
-                            ),
+                            "FEMALE": get_female_data(),
                             "CLOTHES": (self.clothes, 1),
                         },
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_clothes"] * factor / 2),
+                        weight=get_female_weight("named_mii_clothes"),
                     ),
                     GameObjectiveTemplate(
                         label="Gift GIFT to FEMALE",
-                        data={
-                            "GIFT": (self.gifts, 1),
-                            "FEMALE": (
-                                lambda: self.archipelago_options.tomodachi_life_female_miis.value,
-                                1,
-                            ),
-                        },
+                        data={"GIFT": (self.gifts, 1), "FEMALE": get_female_data()},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_gift"] * factor / 2),
+                        weight=get_female_weight("named_mii_gift"),
                     ),
                     GameObjectiveTemplate(
                         label="Give FEMALE the TREASURE treasure",
                         data={
-                            "FEMALE": (
-                                lambda: self.archipelago_options.tomodachi_life_female_miis.value,
-                                1,
-                            ),
+                            "FEMALE": get_female_data(),
                             "TREASURE": (self.treasures, 1),
                         },
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=int(weights["named_mii_treasure"] * factor / 2),
+                        weight=get_female_weight("named_mii_treasure"),
                     ),
                 ]
             )
