@@ -429,8 +429,9 @@ class ConsumablesGame(Game):
                 ],
             ),
             Consumable(
-                name="1 AREA IN 48 HOURS",
+                name="Self-Conceding Strategy",
                 description="If no more trials are completed in 1 accessible area after 48 hours, complete them.",
+                inspiration="Chess",
                 rarity=ConsumableRarity.super_epic,
                 types=[
                     "all_trials",
@@ -629,26 +630,27 @@ class ConsumablesGame(Game):
                 types=["trials_beside", "chosen_area"],
             ),
             Consumable(
-                name="BESIDE ALL IN 1 CHOSEN",
+                name="Interstellar Pendulum",
                 description="Complete the trials right beside all completed in 1 accessible area.",
+                inspiration="Grapple Dog",
                 rarity=ConsumableRarity.epic,
                 types=["trials_beside", "chosen_area"],
                 conditionals=[
                     ConsumableConditional(
-                        name="BESIDE ALL IN 1 CHOSEN ON TRIAL",
+                        name="Newton's Pendulum",
                         condition="On trial completion, given the area is the same",
                         rarity=ConsumableRarity.very_rare,
                         types=["on_trial", "in_same_area"],
                     ),
                     ConsumableConditional(
-                        name="BESIDE ALL IN 1 CHOSEN ON SHOP",
+                        name="Brutalist Pendulum",
                         condition="On shop item purchase",
                         types=["on_shop"],
                     ),
                 ],
             ),
             Consumable(
-                name="BESIDE ALL IN 2 CHOSEN",
+                name="Double Pendulum",
                 description="Complete the trials right beside all completed in up to 2 accessible areas.",
                 rarity=ConsumableRarity.legendary,
                 types=["trials_beside", "chosen_area"],
