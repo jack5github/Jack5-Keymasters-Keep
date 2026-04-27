@@ -244,7 +244,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Yerba mate', 5.4),
         ]
 
-    # TODO: Only 494/8365 clothes have been implemented, use item database to populate the rest
+    # TODO: Only 495/8365 clothes have been implemented, use item database to populate the rest
 
     @cached_property
     def clothing_sets(self) -> list[LTDItem]:
@@ -313,6 +313,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Sheep costume', 50),
             LTDItem('Short-sleeved cardie combo', 32.9),
             LTDItem('Sleeveless shirt outfit', 32.4),
+            LTDItem('Space suit', 5000),
             LTDItem('Sporty tracksuit set', 32),
             LTDItem('Star T-shirt combo', 32),
             LTDItem('Striped long-sleeved set', 41.9),
@@ -682,12 +683,13 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Train outfit', 43),
         ]
 
-    # TODO: Only 107/247 treasures have been implemented, use item database to populate the rest
+    # TODO: Only 109/247 treasures have been implemented, use item database to populate the rest
 
     @cached_property
     def treasures_base(self) -> list[LTDItem]:
         return [
             LTDItem('9-volt battery', 3.4),
+            LTDItem('Alebrije', 34),
             LTDItem('Alpaca', 120),
             LTDItem('Balloon animal', 5),
             LTDItem('Bird feather', 5),
@@ -726,6 +728,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Lump of amber', 200),
             LTDItem('Magnifying glass', 10),
             LTDItem('Moon-shaped lamp', 19),
+            LTDItem('Mysterious egg', 2),
             LTDItem('Mysterious solution', 1.5),
             LTDItem('Octopus', 20),
             LTDItem('Pair of binoculars', 34),
@@ -737,7 +740,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Rabbit', 45),
             LTDItem('Racing game', 55),
             LTDItem('Reggae album', 25),
-            LTDItem('Restaurant album', 12),
+            LTDItem('Restaurant menu', 12),
             LTDItem("Rock 'n' roll album", 25),
             LTDItem('Roll of toilet paper', 1),
             LTDItem('Romantic drama', 15),
@@ -1177,14 +1180,30 @@ class TomodachiLifeLTDGame(Game):
 
     def interiors(self) -> list[str]:
         interiors: list[str] = self.get_item_strings(self.interiors_base)
+        interiors = [
+            *[f"{interior} entire room interior" for interior in interiors],
+            *[f"{interior} wallpaper" for interior in interiors],
+            *[f"{interior} flooring" for interior in interiors],
+        ]
         if (
             "interiors"
             in self.archipelago_options.tomodachi_life_living_the_dream_creations.value.keys()
         ):
             for _ in range(self.ITEM_MAX_WEIGHT):
                 interiors.extend(
-                    self.archipelago_options.tomodachi_life_living_the_dream_creations.value[
-                        "interiors"
+                    [
+                        *[
+                            f"{interior} wallpaper"
+                            for interior in self.archipelago_options.tomodachi_life_living_the_dream_creations.value[
+                                "interiors"
+                            ]
+                        ],
+                        *[
+                            f"{interior} flooring"
+                            for interior in self.archipelago_options.tomodachi_life_living_the_dream_creations.value[
+                                "interiors"
+                            ]
+                        ],
                     ]
                 )
         return interiors
@@ -1200,8 +1219,8 @@ class TomodachiLifeLTDGame(Game):
         )
 
     @staticmethod
-    def object_amounts() -> range:
-        return range(1, 5 + 1)
+    def object_amounts() -> list[str]:
+        return [f"{i} new {'copy' if i == 1 else 'copies'}" for i in range(1, 5 + 1)]
 
     def objects_non_buildings(self) -> list[str]:
         objects: list[str] = self.get_item_strings(
@@ -1283,7 +1302,19 @@ class TomodachiLifeLTDGame(Game):
             'Observe a Mii spontaneously fall for another Mii',
             'Pet a Mii to dispel their anger',
             'Pet a Mii to dispel their sadness',
-            'Play a game with a Mii',
+            # The below covers both Latte Art Quiz and Moving Cups, as I personally have not seen Latte Art Quiz for a long time during my playthrough
+            'Play a game in the Restaurant',
+            'Play a game of Bowling',
+            'Play a game of Coin Spin',
+            'Play a game of Double Shadow Quiz',
+            'Play a game of No Repeats',
+            'Play a game of Odd One Out',
+            'Play a game of Pixel Quiz',
+            'Play a game of Poke the Ferris Wheel',
+            'Play a game of Red Light, Green Light',
+            'Play a game of Shadow Quiz',
+            "Play a game of What's Missing",
+            'Play a game of Zoom Quiz',
             'Remove a Mii',
             'Save and trim a Nintendo Switch video recording of the game',
             'Save your progress',
@@ -1371,14 +1402,14 @@ class TomodachiLifeLTDGame(Game):
                 weight=weights["any_mii_named_level_up_gift"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Renovate any Mii's home with the INTERIOR interior",
+                label="Renovate any Mii's home with the INTERIOR",
                 data={"INTERIOR": (self.interiors, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_named_interior"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Place AMOUNT new copies of OBJECT using the Island Builder",
+                label="Place AMOUNT of OBJECT using the Island Builder",
                 data={
                     "AMOUNT": (self.object_amounts, 1),
                     "OBJECT": (self.objects_non_buildings, 1),
@@ -1462,11 +1493,25 @@ class TomodachiLifeLTDGame(Game):
                         weight=weights["named_mii_any_level_up_gift"] * factor,
                     ),
                     GameObjectiveTemplate(
-                        label="Renovate the home of MII with any interior",
+                        label="Renovate the home of MII with any entire room interior",
                         data={"MII": (self.miis, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
-                        weight=weights["named_mii_any_interior"] * factor,
+                        weight=int(weights["named_mii_any_interior"] * factor / 3),
+                    ),
+                    GameObjectiveTemplate(
+                        label="Renovate the home of MII with any wallpaper",
+                        data={"MII": (self.miis, 1)},
+                        is_time_consuming=False,
+                        is_difficult=False,
+                        weight=int(weights["named_mii_any_interior"] * factor / 3),
+                    ),
+                    GameObjectiveTemplate(
+                        label="Renovate the home of MII with any flooring",
+                        data={"MII": (self.miis, 1)},
+                        is_time_consuming=False,
+                        is_difficult=False,
+                        weight=int(weights["named_mii_any_interior"] * factor / 3),
                     ),
                     GameObjectiveTemplate(
                         label="Feed FOOD to MII",
@@ -1498,7 +1543,7 @@ class TomodachiLifeLTDGame(Game):
                         weight=weights["named_mii_named_level_up_gift"] * factor,
                     ),
                     GameObjectiveTemplate(
-                        label="Renovate the home of MII with the INTERIOR interior",
+                        label="Renovate the home of MII with the INTERIOR",
                         data={"INTERIOR": (self.interiors, 1), "MII": (self.miis, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
