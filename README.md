@@ -24,4 +24,11 @@ Below are links to the [Keymaster's Keep Codex](https://silasary.github.io/kmk_t
 - **[R.E.P.O. (PC)](https://silasary.github.io/kmk_tools/games/repo_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/repo_game.py))
 - **[Sanctum (PC)](https://silasary.github.io/kmk_tools/games/sanctum_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/sanctum_game.py))
 - **[Tomodachi Life (3DS)](https://silasary.github.io/kmk_tools/games/tomodachi_life_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/tomodachi_life_game.py))
+- **[Tomodachi Life: Living the Dream (SW)](https://silasary.github.io/kmk_tools/games/tomodachi_life_living_the_dream_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/tomodachi_life_living_the_dream_game.py))
 - **[Trivia Tricks (PC)](https://silasary.github.io/kmk_tools/games/trivia_tricks_game/)** ([Download](https://github.com/jack5github/Jack5-Keymasters-Keep/blob/main/keymasters_keep/trivia_tricks_game.py))
+
+## Contributing
+
+- Fork this repository and create a pull request to make bug fixes or improvements to an included game.
+- Use [BasedPyright](https://marketplace.visualstudio.com/items?itemName=detachhead.basedpyright) and [Black Formatter](https://marketplace.visualstudio.com/items?itemName=ms-python.black-formatter) when coding.
+- In long lists of items, use 'single quotes'. For all other strings, use "double quotes".

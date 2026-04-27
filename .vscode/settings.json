@@ -1,0 +1,7 @@
+{
+	"black-formatter.args": [
+		"--preview",
+		"--skip-magic-trailing-comma",
+		"--skip-string-normalization"
+	]
+}

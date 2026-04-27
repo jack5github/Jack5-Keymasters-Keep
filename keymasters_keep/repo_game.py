@@ -1,7 +1,7 @@
 """
 A Keymaster's Keep implementation of R.E.P.O., created by Jack5 with help from Zeroman95. The following objective types are included:
 
-- Kill specific monsters
+- Kill specific monsters (difficult)
 - Survive specific locations
 - Purchase specific items
 - Salvage specific valuables
@@ -18,6 +18,8 @@ from ..game import Game  # pyright: ignore[reportMissingImports]
 from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
     GameObjectiveTemplate,
 )
+
+# TODO: Update this implementation to support the cosmetics/magic update, which releases on May 7
 
 
 class RepoWeights(OptionCounter):
