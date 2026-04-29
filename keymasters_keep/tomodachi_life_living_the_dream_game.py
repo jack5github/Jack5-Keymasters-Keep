@@ -13,12 +13,13 @@ As with other Jack5-made implementations, the weights for each kind of objective
 
 Tomodachi Life: Living the Dream is different from the original Tomodachi Life in that items are not region-locked, but they are unlocked in an order that is dependent on the player's region. For this reason, it is recommended to accompany this implementation with a meta-implementation (e.g. Consumables). Cheap items still appear in objectives more frequently than expensive items.
 
-WARNING: This implementation is incomplete, as it does not support all of the items in the game. Jack5 has only added the items that he has unlocked, as he was unable to find an items database online. Once a database is found, this implementation will be updated.
+WARNING: This implementation is incomplete, as it does not support all of the items in the game. For some item types, Jack5 has only added the items he has unlocked, as he is unable to find a complete items database online. Once a complete database is found with American and Australian item names, this implementation will be fully updated.
 """
 
 from dataclasses import dataclass
 from functools import cached_property
 from Options import (  # pyright: ignore[reportMissingImports]
+    DefaultOnToggle,
     OptionCounter,
     OptionDict,
     OptionList,
@@ -65,12 +66,20 @@ class TomodachiLifeLTDWeights(OptionCounter):
     }
 
 
-class TomodachiLifeLTDTrash(Toggle):
+class TomodachiLifeLTDSkipLockedItems(DefaultOnToggle):
     """
-    Whether to allow trash food and treasures (e.g. 'moldy bread', 'Box of tissues' etc.) to appear as part of Tomodachi Life objectives.
+    Whether Tomodachi Life: Living the Dream objectives involving items should include a notice that allows them to be skipped if their items are not unlocked or owned by the player, depending on the item type. Defaults to true.
     """
 
-    display_name: str = "Tomodachi Life: Living the Dream Trash"
+    display_name: str = "Tomodachi Life: Living the Dream Skip Locked Items"
+
+
+class TomodachiLifeLTDTrashItems(Toggle):
+    """
+    Whether to allow trash food and treasures (e.g. 'moldy bread', 'Box of tissues' etc.) to appear as part of Tomodachi Life: Living the Dream objectives. Defaults to false.
+    """
+
+    display_name: str = "Tomodachi Life: Living the Dream Trash Items"
 
 
 class TomodachiLifeLTDMiis(OptionList):
@@ -113,7 +122,8 @@ class TomodachiLifeLTDCreations(OptionDict):
 @dataclass
 class TomodachiLifeLTDArchipelagoOptions:
     tomodachi_life_living_the_dream_weights: TomodachiLifeLTDWeights
-    tomodachi_life_living_the_dream_trash: TomodachiLifeLTDTrash
+    tomodachi_life_living_the_dream_skip_locked_items: TomodachiLifeLTDSkipLockedItems
+    tomodachi_life_living_the_dream_trash_items: TomodachiLifeLTDTrashItems
     tomodachi_life_living_the_dream_miis: TomodachiLifeLTDMiis
     tomodachi_life_living_the_dream_creations: TomodachiLifeLTDCreations
 
@@ -315,7 +325,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('matsutake mushroom', 78),
             LTDItem('meat-and-potato stew', 6),
             LTDItem('meatballs', 5),
-            LTDItem('minestrone (soup)', 7),
+            LTDItem('minestrone soup / minestrone', 7),
             LTDItem('miso soup', 2.8),
             LTDItem('miyeok-guk', 3),
             LTDItem('mochi', 1.5),
@@ -456,58 +466,201 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('zucchini', 3),
         ]
 
-    # TODO: Continue adding food items from here
     @cached_property
     def food_desserts(self) -> list[LTDItem]:
+        """
+        The food items classified as 'Dessert' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/u/0/d/1iPb1freZ57gP7tBDMbvIUi3cDvIE979COqlDsRTYu3Y/htmlview#gid=415930329. Follows the format 'American name / Australian name'.
+
+        Returns:
+            list[LTDItem]: The list of 'Dessert' food items.
+        """
         return [
-            LTDItem('Apple', 1.5),
-            LTDItem('Apple crumble', 6.8),
-            LTDItem('Beef jerky', 3),
-            LTDItem('Black Forest gateau', 4.5),
-            LTDItem('Boiled sweet', 0.5),
-            LTDItem('Butter cookie', 1.8),
-            LTDItem('Caramelised nuts', 5.7),
-            LTDItem('Chocolate egg', 3.5),
-            LTDItem('Chocolate sundae', 7.8),
-            LTDItem('Cinnamon roll', 1.3),
-            LTDItem('Coconut', 5.5),
-            LTDItem('Colomba pasquale', 7.8),
-            LTDItem('Cracker', 1.5),
-            LTDItem('Frozen yoghurt', 1.8),
-            LTDItem('Fudge', 4),
-            LTDItem('Honey', 4.5),
-            LTDItem('Liquorice', 0.7),
-            LTDItem('Macadamia nuts', 5),
-            LTDItem('Macaron', 3),
-            LTDItem('Mango', 9),
-            LTDItem('Oatmeal cookie', 2.2),
-            LTDItem('Pastel de nata', 2.8),
-            LTDItem('Popcorn', 2.5),
-            LTDItem('Raisin bread', 1.5),
-            LTDItem('Soft ice cream', 2.5),
-            LTDItem('Soufflé', 5),
-            LTDItem('Tompouce', 5),
-            LTDItem('Torrijas', 7),
-            LTDItem('Watermelon slice', 2),
+            LTDItem('anpan', 1.5),
+            LTDItem('apple', 1.5),
+            LTDItem('apple crumble', 6.8),
+            LTDItem('apple pie', 4.8),
+            # TODO: LTDItem('angel wings', 8), is not listed as a dessert in America
+            LTDItem('baked sweet potato', 3.8),
+            LTDItem('banana', 1),
+            LTDItem('banana peel', 0.2),
+            LTDItem('banana split', 6.5),
+            LTDItem('beef jerky', 3),
+            # TODO: LTDItem('birthday cake', 0), has $0 cost, verify in-game before adding
+            LTDItem('biscuit', 1.5),
+            LTDItem('Black Forest cake / Black Forest gateau', 4.5),
+            LTDItem('brownie', 4.2),
+            LTDItem('bubble waffle', 9.8),
+            LTDItem('bugnes', 8),
+            LTDItem('bundkuchen', 6.2),
+            LTDItem('butter cookie', 1.8),
+            LTDItem('candy apple', 2.5),
+            LTDItem('candy corn', 0.75),
+            LTDItem('canelé', 4),
+            LTDItem('cannoli', 2),
+            LTDItem('caramelized nuts / caramelised nuts', 5.7),
+            LTDItem('carrot cake', 5.3),
+            LTDItem('castella cake', 5),
+            LTDItem('cheesecake', 4.9),
+            LTDItem('cherimoya', 3),
+            LTDItem('cherries', 2.9),
+            LTDItem('cherry pie', 5.2),
+            LTDItem('chewing gum', 1.2),
+            LTDItem('chocolate', 1.5),
+            LTDItem('chocolate egg', 3.5),
+            LTDItem('chocolate gâteau', 6),
+            LTDItem('chocolate sundae', 7.8),
+            LTDItem('chocolate toast', 1.5),
+            LTDItem('churros', 3),
+            LTDItem('cinnamon roll', 1.3),
+            LTDItem('clotted cream', 1.2),
+            LTDItem('coconut', 5.5),
+            LTDItem('colomba pasquale', 7.8),
+            LTDItem('cotton candy', 3),
+            LTDItem('cracker', 1.5),
+            LTDItem('cream puff', 2.5),
+            LTDItem('crème brûlée', 4.6),
+            LTDItem('crepe', 4),
+            LTDItem('dalgona', 4),
+            LTDItem('dates', 2.5),
+            LTDItem('dorayaki', 4.5),
+            LTDItem('doughnut', 1.3),
+            LTDItem('durian', 5),
+            LTDItem('elephant ear', 2),
+            LTDItem('fancy cupcake', 5),
+            LTDItem('flan', 1.5),
+            LTDItem('fried plantains', 4),
+            LTDItem('frozen treat', 1),
+            LTDItem('frozen yoghurt', 1.8),
+            LTDItem('fudge', 4),
+            LTDItem('gelatin snack', 1.5),
+            LTDItem('gingerbread', 4.5),
+            LTDItem('gingersnap', 2.3),
+            LTDItem('granola parfait', 6),
+            LTDItem('grapefruit', 3),
+            LTDItem('grapes', 4.9),
+            LTDItem('gummy candy', 1),
+            LTDItem('handmade chocolates / handmade chocolate', 30),
+            LTDItem('hard candy / boiled sweet', 0.5),
+            LTDItem('honey', 4.5),
+            LTDItem('ice-cream cone', 2.5),
+            LTDItem('ice-cream sandwich', 3.1),
+            LTDItem('key lime pie', 4.6),
+            LTDItem('king cake', 5.2),
+            LTDItem('kiwi', 1.5),
+            LTDItem('licorice / liquorice', 0.7),
+            LTDItem('lollipop', 3),
+            LTDItem('macadamia nuts', 5),
+            LTDItem('macaron', 3),
+            LTDItem('mango', 9),
+            LTDItem('maple taffy', 3.4),
+            LTDItem('marzipan fruit', 7),
+            LTDItem('melon', 10),
+            LTDItem('mince pie', 2),
+            LTDItem('mint candy', 0.2),
+            # TODO: LTDItem('mithai', 0), has $0 cost, verify in-game before adding
+            LTDItem('muffin', 3.3),
+            LTDItem('napoleon cake', 6.2),
+            LTDItem('natillas', 2.5),
+            LTDItem('oatmeal cookie', 2.2),
+            LTDItem('orange', 1),
+            LTDItem('oriental melon', 1),
+            LTDItem('pain au chocolat', 1.2),
+            LTDItem('pain aux raisins / raisin bread', 1.5),
+            LTDItem('pancakes', 4),
+            LTDItem('pandoro', 5.5),
+            LTDItem('panettone', 2),
+            LTDItem('panna cotta', 2.8),
+            LTDItem('pastel de nata', 2.8),
+            LTDItem('peach', 4.8),
+            LTDItem('peanuts', 3.7),
+            LTDItem('pear', 4.6),
+            LTDItem('persimmon', 2),
+            LTDItem('pineapple', 9.8),
+            LTDItem('pineapple cakes', 7.6),
+            LTDItem('pistachios', 3.5),
+            LTDItem('plum pudding', 4.8),
+            LTDItem('popcorn', 2.5),
+            LTDItem('potato chips', 1.3),
+            LTDItem('pretzel', 1.3),
+            LTDItem('profiteroles', 6.9),
+            LTDItem('pumpkin pie', 4.6),
+            LTDItem('red velvet cake', 4.5),
+            LTDItem('rice cracker', 1),
+            LTDItem('rice pudding', 4.5),
+            LTDItem('roasted chestnuts', 5.8),
+            LTDItem("s'more", 3),
+            LTDItem('saltine crackers', 1),
+            LTDItem('shaved ice', 1.5),
+            LTDItem('soft-serve ice cream / soft ice cream', 2.5),
+            LTDItem('songpyeon', 6),
+            LTDItem('soufflé', 5),
+            LTDItem('stollen', 8),
+            LTDItem('strawberry', 4.8),
+            LTDItem('strawberry shortcake', 4),
+            LTDItem('sunflower seeds', 3),
+            LTDItem('sweet potato', 3.8),
+            LTDItem('taiyaki', 2),
+            LTDItem('tangyuan', 7.6),
+            LTDItem('tiramisu', 5),
+            LTDItem('tompouce', 5),
+            LTDItem('torrijas', 7),
+            LTDItem('tricolor dango', 3),
+            LTDItem('turrones', 5.2),
+            LTDItem('waffle', 2),
+            LTDItem('walnuts', 3),
+            LTDItem('watermelon / watermelon slice', 2),
+            LTDItem('yogurt', 1.9),
+            LTDItem('yokan', 5.8),
+            LTDItem('Yule log', 9),
+            LTDItem('zenzai', 5),
         ]
 
     @cached_property
     def food_drinks(self) -> list[LTDItem]:
+        """
+        The food items classified as 'Drinks' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/u/0/d/1iPb1freZ57gP7tBDMbvIUi3cDvIE979COqlDsRTYu3Y/htmlview#gid=415930329. Follows the format 'American name / Australian name'.
+
+        Returns:
+            list[LTDItem]: The list of 'Drinks' food items.
+        """
         return [
-            LTDItem('Bubble tea', 5.5),
-            LTDItem('Green juice', 2),
-            LTDItem('Orange juice', 2),
-            LTDItem('Smoothie', 2.5),
-            LTDItem('Tap water', 0.9),
-            LTDItem('Tea', 5.5),
-            LTDItem('Yerba mate', 5.4),
+            LTDItem('apple juice', 2),
+            LTDItem('bubble tea', 5.5),
+            LTDItem('cappuccino', 5.8),
+            LTDItem('chamomile tea', 2.7),
+            LTDItem('coffee', 5),
+            LTDItem('daechu-cha', 4.5),
+            LTDItem('energy drink', 3),
+            LTDItem('espresso', 5.5),
+            LTDItem('green juice', 2),
+            LTDItem('green tea', 1),
+            LTDItem('hot chocolate', 4),
+            LTDItem('iced latte', 4),
+            LTDItem('lemonade', 2.5),
+            # TODO: LTDItem('matcha', 0), has $0 cost, verify in-game before adding
+            LTDItem('milk', 1.8),
+            LTDItem('milkshake', 2),
+            LTDItem('omija-cha', 4.5),
+            LTDItem('orange juice', 2),
+            LTDItem('protein shake', 10),
+            LTDItem('root-beer float', 2.5),
+            LTDItem('smoothie', 2.5),
+            LTDItem('soda', 1.8),
+            LTDItem('sparkling water', 1.2),
+            LTDItem('spoiled milk', 0.2),
+            LTDItem('sports drink', 2),
+            LTDItem('tap water', 0.9),
+            LTDItem('tea', 5.5),
+            LTDItem('tomato juice', 1.5),
+            LTDItem('yerba mate', 5.4),
         ]
 
-    # TODO: Only 519/8365 clothes have been implemented, use item database to populate the rest
+    # TODO: Only some clothes have been implemented, use item database to populate the rest
 
     @cached_property
     def clothing_sets(self) -> list[LTDItem]:
         return [
+            LTDItem('ABC loungewear set', 25.7),
             LTDItem('Aerobics outfit', 38.9),
             LTDItem('Art explosion combo', 40),
             LTDItem('Baseball uniform', 60),
@@ -529,6 +682,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Cosmic combo', 56.7),
             LTDItem('Cow costume', 45),
             LTDItem('Cyberpunk set', 46.6),
+            LTDItem('Dark dolly set', 56.6),
             LTDItem('Dotted shirt combo', 33.6),
             LTDItem('Duffle coat and skirt combo', 58.2),
             LTDItem('Fizzy drink costume', 31),
@@ -568,6 +722,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Plain jumper combo', 31.2),
             LTDItem('Plain skirt suit', 43.1),
             LTDItem('Plain T-shirt combo', 30.9),
+            LTDItem('Princess attire set', 670.1),
             LTDItem('Polo-neck jumper combo', 37.8),
             LTDItem('Punky skirt combo', 44.5),
             LTDItem('Qipao set', 55.6),
@@ -629,6 +784,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Hiking jacket', 12),
             LTDItem('Inspirational T-shirt', 11),
             LTDItem('Jockey outfit', 17),
+            LTDItem('Kanji T-shirt', 15),
             LTDItem('Kung fu shirt', 15),
             LTDItem('Lace polo neck', 14.3),
             LTDItem('Leopard T-shirt', 16.5),
@@ -676,6 +832,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Tailored jacket', 11.5),
             LTDItem('Tennis jumper', 11),
             LTDItem('Tiger baseball jacket', 12),
+            LTDItem('Tracksuit jacket', 13.5),
             LTDItem('Tracksuit top', 11),
             LTDItem('Triangles T-shirt', 11.8),
             LTDItem('Tweed jacket', 25),
@@ -684,6 +841,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Waistcoat and T-shirt', 13),
             LTDItem('Wide-striped shirt', 12.5),
             LTDItem('Workwear jacket', 13),
+            LTDItem('Wrinkled outfit', 7.5),
             LTDItem('Zip-up hooded sweatshirt', 11),
         ]
 
@@ -708,6 +866,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Kandora', 39),
             LTDItem('Karate gi', 27.5),
             LTDItem('Katrina dress', 41),
+            LTDItem('Kimono', 85),
             LTDItem('Linen dress', 22),
             LTDItem("Painter's boilersuit", 21),
             LTDItem('Plain dress', 40),
@@ -741,6 +900,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Denim maxi skirt', 10.2),
             LTDItem('Distressed jeans', 9.5),
             LTDItem('Dotted bubble shorts', 10),
+            LTDItem('Dotted maxi skirt', 9.8),
             LTDItem('Fab jeans', 11),
             LTDItem('Frilled mini skirt', 11),
             LTDItem('Gym shorts', 11),
@@ -748,6 +908,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Japanese pattern trousers', 15),
             LTDItem('Jeans', 9.2),
             LTDItem('Joggers', 8.2),
+            LTDItem('Knee pad trousers', 11),
             LTDItem('Knitted skirt', 9.8),
             LTDItem('Lace pencil skirt', 14),
             LTDItem('Lemon pattern skirt', 12),
@@ -787,11 +948,13 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Beret', 19),
             LTDItem('Big ribbon bow', 19),
             LTDItem('Boater', 18),
+            LTDItem('Bunny ears', 19.5),
             LTDItem('Bunny ears ribbon bow', 14),
             LTDItem('Cardboard box hat', 5),
             LTDItem('Cow hood', 20),
             LTDItem('Dog hood', 25),
             LTDItem('Drinking straw', 7),
+            LTDItem('Floral hairclip', 9),
             LTDItem('Floral kanzashi haripin', 32),
             LTDItem('Flower hair pin', 8.7),
             LTDItem('Flower headdress', 21.3),
@@ -863,6 +1026,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Triple-chain necklace', 35),
             LTDItem('Turtle shell', 25),
             LTDItem('Whistle', 6),
+            LTDItem('Wind-up key', 15.5),
             LTDItem('Wooden bead necklace', 18),
         ]
 
@@ -892,6 +1056,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Ruffled socks', 5.8),
             LTDItem('Sheer dotted socks', 5.1),
             LTDItem('Stockings', 5.1),
+            LTDItem('Sushi socks', 10),
             LTDItem('Tabi socks', 4.5),
             LTDItem('Thigh warmers', 4),
         ]
@@ -952,6 +1117,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Car outfit', 40),
             LTDItem('Corn on the cob outfit', 26),
             LTDItem('Cow outfit', 25),
+            LTDItem('Daruma outfit', 23),
             LTDItem('Dustbin outfit', 18),
             LTDItem('Fizzy drink outfit', 24),
             LTDItem('Froggy outfit', 26.6),
@@ -966,86 +1132,95 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Train outfit', 43),
         ]
 
-    # TODO: Only 111/247 treasures have been implemented, use item database to populate the rest
+    # TODO: Only some treasures have been implemented, use item database to populate the rest
 
     @cached_property
     def treasures_base(self) -> list[LTDItem]:
         return [
             LTDItem('9-volt battery', 3.4),
-            LTDItem('Alebrije', 34),
-            LTDItem('Alpaca', 120),
-            LTDItem('Balloon animal', 5),
-            LTDItem('Bird feather', 5),
-            LTDItem('Botanical field guide', 25),
-            LTDItem('Bottle of perfume', 51),
-            LTDItem('Bouquet', 40),
-            LTDItem('Box of tissues', 1.2),
-            LTDItem('Call bell', 5),
-            LTDItem('Ceremonial mountain of buns', 33),
-            LTDItem('Chess piece', 3),
-            LTDItem('Chick', 15),
-            LTDItem('Compass', 5.3),
-            LTDItem('Crystal ball', 75.5),
-            LTDItem('Cut-glass ornament', 50),
-            LTDItem('Dating sim game', 53),
-            LTDItem('Die', 1),
-            LTDItem('Disco ball', 200),
-            LTDItem('Embroidered decoration', 33),
-            LTDItem('Flamingo', 150),
-            LTDItem('Globe', 34),
-            LTDItem('Gold ingot', 1000),
-            LTDItem('Hand mirror', 17),
-            LTDItem('Hedgehog', 20),
-            LTDItem('Historical bust', 67),
-            LTDItem('Horror film', 15),
-            LTDItem('Horror game', 62),
-            LTDItem('Hourglass', 3.2),
-            LTDItem('Insect collection', 81),
+            LTDItem('alebrije', 34),
+            LTDItem('alpaca', 120),
+            LTDItem('balloon animal', 5),
+            LTDItem('bird feather', 5),
+            LTDItem('botanical field guide', 25),
+            LTDItem('botijo', 87),
+            LTDItem('bottle of perfume', 51),
+            LTDItem('bouquet', 40),
+            LTDItem('box of tissues', 1.2),
+            LTDItem('call bell', 5),
+            LTDItem('ceremonial mountain of buns', 33),
+            LTDItem('chess piece', 3),
+            LTDItem('chick', 15),
+            LTDItem('compass', 5.3),
+            LTDItem('crystal', 60),
+            LTDItem('crystal ball', 75.5),
+            LTDItem('cut-glass ornament', 50),
+            LTDItem('dance music album', 30),
+            LTDItem('dancing game', 38),
+            LTDItem('dating-sim game / dating sim game', 53),
+            LTDItem('die', 1),
+            LTDItem('disco ball', 200),
+            LTDItem('embroidered decoration', 33),
+            LTDItem('flamingo', 150),
+            LTDItem('globe', 34),
+            LTDItem('gold ingot', 1000),
+            LTDItem('hand mirror', 17),
+            LTDItem('hedgehog', 20),
+            LTDItem('historical bust', 67),
+            LTDItem('horror film', 15),
+            LTDItem('horror game', 62),
+            LTDItem('hourglass', 3.2),
+            LTDItem('insect collection', 81),
+            LTDItem('J-pop album', 30),
+            LTDItem('jellyfish', 3),
             LTDItem('Jōmon-era pottery', 130),
-            LTDItem('Kettle', 9),
-            LTDItem('Koala cuddly toy', 36),
-            LTDItem('Lightbulb', 5.5),
-            LTDItem('Lion', 200),
-            LTDItem('Loofah', 2),
-            LTDItem('Love story', 8),
-            LTDItem('Lump of amber', 200),
-            LTDItem('Magnifying glass', 10),
-            LTDItem('Moon-shaped lamp', 19),
-            LTDItem('Mysterious egg', 2),
-            LTDItem('Mysterious solution', 1.5),
-            LTDItem('Octopus', 20),
-            LTDItem('Pair of binoculars', 34),
-            LTDItem('Penguin', 150),
-            LTDItem('Picture postcard set', 18),
-            LTDItem('Piece of coral', 53),
-            LTDItem('Pig', 120),
-            LTDItem('Puzzle game', 38),
-            LTDItem('Rabbit', 45),
-            LTDItem('Racing game', 55),
-            LTDItem('Reggae album', 25),
-            LTDItem('Restaurant menu', 12),
-            LTDItem("Rock 'n' roll album", 25),
-            LTDItem('Roll of toilet paper', 1),
-            LTDItem('Romantic drama', 15),
-            LTDItem('Rose', 10),
-            LTDItem('Rubber duck', 4),
-            LTDItem('Sci-fi film', 20),
-            LTDItem('Shark', 150),
-            LTDItem('Ship in a bottle', 45),
-            LTDItem('Solar panel', 150),
-            LTDItem('Spinning top', 7),
-            LTDItem('Stick', 0.3),
-            LTDItem('Stopwatch', 16),
-            LTDItem('Supposedly expensive vase', 400),
-            LTDItem('Tap', 4),
-            LTDItem('Tawashi scrub brush', 1),
-            LTDItem('Treasure map', 99),
+            LTDItem('kettle', 9),
+            LTDItem('koala cuddly toy', 36),
+            LTDItem('lightbulb', 5.5),
+            LTDItem('lion', 200),
+            LTDItem('loofah', 2),
+            LTDItem('love story', 8),
+            LTDItem('lump of amber', 200),
+            LTDItem('magnifying glass', 10),
+            LTDItem('moon-shaped lamp', 19),
+            LTDItem('mysterious egg', 2),
+            LTDItem('mysterious solution', 1.5),
+            LTDItem('octopus', 20),
+            LTDItem('pair of binoculars', 34),
+            LTDItem('penguin', 150),
+            LTDItem('picture postcard set', 18),
+            LTDItem('piece of coral', 53),
+            LTDItem('pig', 120),
+            LTDItem('pop album', 25),
+            LTDItem('puzzle game', 38),
+            LTDItem('rabbit', 45),
+            LTDItem('racing game', 55),
+            LTDItem('reggae album', 25),
+            LTDItem('restaurant menu', 12),
+            LTDItem("rock album / rock 'n' roll album", 25),
+            LTDItem('roll of toilet paper', 1),
+            LTDItem('romantic drama', 15),
+            LTDItem('rose', 10),
+            LTDItem('rubber duck', 4),
+            LTDItem('sci-fi film', 20),
+            LTDItem('shark', 150),
+            LTDItem('ship in a bottle', 45),
+            LTDItem('solar panel', 150),
+            LTDItem('spinning top', 7),
+            LTDItem('stick', 0.3),
+            LTDItem('stopwatch', 16),
+            LTDItem('supposedly expensive vase', 400),
+            LTDItem('tanuki statue', 30),
+            LTDItem('tap', 4),
+            LTDItem('tawashi scrub brush', 1),
+            LTDItem('treasure map', 99),
             LTDItem('UFO', 58),
-            LTDItem('Unicorn', 300),
-            LTDItem('Vacuum tube', 18),
-            LTDItem('Variety show', 15),
-            LTDItem('Water flea', 1),
-            LTDItem('Weak-looking elastic cord', 1),
+            LTDItem('unicorn', 300),
+            LTDItem('vacuum tube', 18),
+            LTDItem('variety show', 15),
+            LTDItem('video game soundtrack', 25),
+            LTDItem('water flea', 1),
+            LTDItem('weak-looking elastic cord', 1),
         ]
 
     @cached_property
@@ -1174,7 +1349,7 @@ class TomodachiLifeLTDGame(Game):
             'Before eating',
         ]
 
-    # TODO: Only 46/272 interior sets have been implemented, use item database to populate the rest
+    # TODO: Only some interior sets have been implemented, use item database to populate the rest
 
     @cached_property
     def interiors_base(self) -> list[LTDItem]:
@@ -1238,7 +1413,7 @@ class TomodachiLifeLTDGame(Game):
             interior.name = f"{interior.name} set"
         return interiors
 
-    # TODO: Only 92/365 objects have been implemented, use item database to populate the rest
+    # TODO: Only some objects have been implemented, use item database to populate the rest
 
     @cached_property
     def objects_props(self) -> list[LTDItem]:
@@ -1354,12 +1529,19 @@ class TomodachiLifeLTDGame(Game):
             item (LTDItem): The item to check.
 
         Returns:
-            bool: Whether the item is trash. This is always false if `tomodachi_life_living_the_dream_trash` is true.
+            bool: Whether the item is trash. This is always false if `tomodachi_life_living_the_dream_trash_items` is true.
         """
         return (
-            not self.archipelago_options.tomodachi_life_living_the_dream_trash.value
+            not self.archipelago_options.tomodachi_life_living_the_dream_trash_items.value
             and item.name
-            in ['moldy bread', 'ruined bread', 'Box of tissues', 'Roll of toilet paper']
+            in [
+                'banana peel',
+                'moldy bread',
+                'ruined bread',
+                'spoiled milk',
+                'Box of tissues',
+                'Roll of toilet paper',
+            ]
         )
 
     ITEM_MAX_WEIGHT: int = 4
@@ -1660,21 +1842,21 @@ class TomodachiLifeLTDGame(Game):
         factor: int = 100
         objectives: list[GameObjectiveTemplate] = [
             GameObjectiveTemplate(
-                label="Feed FOOD to any Mii",
+                label=f"Feed FOOD{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''} to any Mii",
                 data={"FOOD": (self.foods, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_named_food"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Dress any Mii in CLOTHING",
+                label=f"Dress any Mii in CLOTHING{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                 data={"CLOTHING": (self.clothing, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_named_clothing"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Give any Mii the TREASURE treasure",
+                label=f"Give any Mii the TREASURE treasure{' if owned' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                 data={"TREASURE": (self.treasures, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
@@ -1688,14 +1870,14 @@ class TomodachiLifeLTDGame(Game):
                 weight=weights["any_mii_named_level_up_gift"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Renovate any Mii's home with the INTERIOR",
+                label=f"Renovate any Mii's home with the INTERIOR{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                 data={"INTERIOR": (self.interiors, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_named_interior"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Place AMOUNT of OBJECT using the Island Builder",
+                label=f"Place AMOUNT of OBJECT{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''} using the Island Builder",
                 data={
                     "AMOUNT": (self.object_amounts, 1),
                     "OBJECT": (self.objects_non_buildings, 1),
@@ -1705,14 +1887,15 @@ class TomodachiLifeLTDGame(Game):
                 weight=weights["place_objects"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Place new BUILDING using the Island Builder",
+                # Do not require the player to buy more than one extra of each building, as they are very expensive
+                label=f"Place or move second BUILDING{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''} using the Island Builder",
                 data={"BUILDING": (self.objects_buildings, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["place_building"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Draw AMOUNT tiles of LANDSCAPE using the Island Builder",
+                label=f"Draw AMOUNT tiles of LANDSCAPE{' if owned' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''} using the Island Builder",
                 data={
                     "AMOUNT": (self.landscape_amounts, 1),
                     "LANDSCAPE": (self.landscapes, 1),
@@ -1739,7 +1922,7 @@ class TomodachiLifeLTDGame(Game):
         if len(self.exteriors()) > 0:
             objectives.append(
                 GameObjectiveTemplate(
-                    label="Renovate any Mii's home with the EXTERIOR exterior",
+                    label=f"Renovate any Mii's home with the EXTERIOR exterior{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                     data={"EXTERIOR": (self.exteriors, 1)},
                     is_time_consuming=False,
                     is_difficult=False,
@@ -1800,21 +1983,21 @@ class TomodachiLifeLTDGame(Game):
                         weight=int(weights["named_mii_any_interior"] * factor / 3),
                     ),
                     GameObjectiveTemplate(
-                        label="Feed FOOD to MII",
+                        label=f"Feed FOOD{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''} to MII",
                         data={"FOOD": (self.foods, 1), "MII": (self.miis, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=weights["named_mii_named_food"] * factor,
                     ),
                     GameObjectiveTemplate(
-                        label="Dress MII in CLOTHING",
+                        label=f"Dress MII in CLOTHING{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                         data={"CLOTHING": (self.clothing, 1), "MII": (self.miis, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=weights["named_mii_named_clothing"] * factor,
                     ),
                     GameObjectiveTemplate(
-                        label="Give MII the TREASURE treasure",
+                        label=f"Give MII the TREASURE treasure{' if owned' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                         data={"MII": (self.miis, 1), "TREASURE": (self.treasures, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
@@ -1829,7 +2012,7 @@ class TomodachiLifeLTDGame(Game):
                         weight=weights["named_mii_named_level_up_gift"] * factor,
                     ),
                     GameObjectiveTemplate(
-                        label="Renovate the home of MII with the INTERIOR",
+                        label=f"Renovate the home of MII with the INTERIOR{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                         data={"INTERIOR": (self.interiors, 1), "MII": (self.miis, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
@@ -1848,7 +2031,7 @@ class TomodachiLifeLTDGame(Game):
                             weight=weights["named_mii_any_exterior"] * factor,
                         ),
                         GameObjectiveTemplate(
-                            label="Renovate the home of MII with the EXTERIOR exterior",
+                            label=f"Renovate the home of MII with the EXTERIOR exterior{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''}",
                             data={
                                 "EXTERIOR": (self.exteriors, 1),
                                 "MII": (self.miis, 1),
