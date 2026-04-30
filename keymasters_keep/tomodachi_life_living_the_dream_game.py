@@ -19,6 +19,7 @@ WARNING: This implementation is incomplete, as it does not support all of the it
 from dataclasses import dataclass
 from functools import cached_property
 from Options import (  # pyright: ignore[reportMissingImports]
+    Choice,
     DefaultOnToggle,
     OptionCounter,
     OptionDict,
@@ -64,6 +65,17 @@ class TomodachiLifeLTDWeights(OptionCounter):
         "place_landscapes": 2,
         "bonus": 20,
     }
+
+
+class TomodachiLifeLTDRegion(Choice):
+    """
+    The region of the copy of Tomodachi Life: Living the Dream being played. Affects only the names of items. Only `north_america` and `europe` are implemented at the moment. If multiple names are not implemented for a given item in this implementation, either region's name may be used. Defaults to `north_america`.
+    """
+
+    display_name: str = "Tomodachi Life: Living the Dream Region"
+    option_north_america: int = 0
+    option_europe: int = 1
+    default: int = 0
 
 
 class TomodachiLifeLTDSkipLockedItems(DefaultOnToggle):
@@ -122,6 +134,7 @@ class TomodachiLifeLTDCreations(OptionDict):
 @dataclass
 class TomodachiLifeLTDArchipelagoOptions:
     tomodachi_life_living_the_dream_weights: TomodachiLifeLTDWeights
+    tomodachi_life_living_the_dream_region: TomodachiLifeLTDRegion
     tomodachi_life_living_the_dream_skip_locked_items: TomodachiLifeLTDSkipLockedItems
     tomodachi_life_living_the_dream_trash_items: TomodachiLifeLTDTrashItems
     tomodachi_life_living_the_dream_miis: TomodachiLifeLTDMiis
@@ -129,17 +142,31 @@ class TomodachiLifeLTDArchipelagoOptions:
 
 
 @dataclass
-class LTDItem:
+class LTDName:
     """
-    An item from Tomodachi Life.
+    The names of an item from Tomodachi Life: Living the Dream.
 
     Args:
-        name (str): The name of the item.
-        cost (float | int): The cost of the item.
+        na (str): The name of the item in the American version of the game.
+        eu (str): The name of the item in the European version of the game.
     """
 
-    name: str
-    cost: float | int
+    na: str
+    eu: str
+
+
+@dataclass
+class LTDItem:
+    """
+    An item from Tomodachi Life: Living the Dream.
+
+    Args:
+        name (str | LTDName): The name of the item.
+        cost (float | int | None): The cost of the item, or None if it can only be obtained under special circumstances.
+    """
+
+    name: str | LTDName
+    cost: float | int | None
 
 
 class TomodachiLifeLTDGame(Game):
@@ -159,7 +186,7 @@ class TomodachiLifeLTDGame(Game):
     @cached_property
     def food_food(self) -> list[LTDItem]:
         """
-        The food items classified as 'Food' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/u/0/d/1iPb1freZ57gP7tBDMbvIUi3cDvIE979COqlDsRTYu3Y/htmlview#gid=415930329. Follows the format 'American name / Australian name'.
+        The food items classified as 'Food' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/d/1TyLMb9qR52tpPSeCWo3kovkHwIGDUlJQYmKz77NHAIE/htmlview#gid=415930329.
 
         Returns:
             list[LTDItem]: The list of 'Food' food items.
@@ -199,7 +226,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('charcoal-grilled beef', 13),
             LTDItem('chawanmushi', 5),
             LTDItem('cheese', 2),
-            # TODO: 'cheese board' has a cost of $0 in the database, verify cost in-game before adding
+            LTDItem('cheese board', None),
             LTDItem('cheeseburger', 3),
             LTDItem('chicken noodle soup', 6.8),
             LTDItem('chicken pho', 8),
@@ -207,7 +234,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('chicken tikka masala', 12.9),
             LTDItem('chikuwa fish cake', 1),
             LTDItem('chili prawns', 6.4),
-            LTDItem('chili sin carne / Chilli bowl', 7.6),
+            LTDItem(LTDName('chili sin carne', 'chilli bowl'), 7.6),
             LTDItem('chinese mitten crabs', 32),
             LTDItem('chirashi-zushi', 8),
             LTDItem('clam chowder', 6),
@@ -239,7 +266,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('ehomaki', 7),
             LTDItem('empanadas', 12),
             LTDItem('enchiladas', 14),
-            LTDItem('English breakfast / full English', 8),
+            LTDItem(LTDName('English breakfast', 'full English'), 8),
             LTDItem('escargot', 12),
             LTDItem('falafel', 7.8),
             LTDItem('filet mignon', 50),
@@ -306,7 +333,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('khao man gai', 11),
             LTDItem("kid's meal", 7),
             LTDItem('kimchi', 2.8),
-            LTDItem('kimchi-bokkeum-bap / kimchi fried rice', 6),
+            LTDItem(LTDName('kimchi-bokkeum-bap', 'kimchi fried rice'), 6),
             LTDItem('kimchi-jjigae', 5),
             LTDItem('kimchijeon', 8),
             LTDItem('kitsune udon', 6.5),
@@ -314,7 +341,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('konnyaku', 1),
             LTDItem('Korean chili pepper', 0.5),
             LTDItem('Korean sausage', 3),
-            LTDItem('lasagna / lasagne', 6.5),
+            LTDItem(LTDName('lasagna', 'lasagne'), 6.5),
             LTDItem('liver', 4.8),
             LTDItem('lobster', 9.8),
             LTDItem('lobster roll', 18),
@@ -325,7 +352,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('matsutake mushroom', 78),
             LTDItem('meat-and-potato stew', 6),
             LTDItem('meatballs', 5),
-            LTDItem('minestrone soup / minestrone', 7),
+            LTDItem(LTDName('minestrone soup', 'minestrone'), 7),
             LTDItem('miso soup', 2.8),
             LTDItem('miyeok-guk', 3),
             LTDItem('mochi', 1.5),
@@ -334,7 +361,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('mooncakes', 9.5),
             LTDItem('mozzarella', 3),
             LTDItem('mul naengmyeon', 6.7),
-            LTDItem('mushroom / porcini mushroom', 1.3),
+            LTDItem(LTDName('mushroom', 'porcini mushroom'), 1.3),
             LTDItem('mussels', 7.9),
             LTDItem('myoga ginger', 1),
             LTDItem('nachos', 7.5),
@@ -363,7 +390,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Peking duck', 50),
             LTDItem('pesto pasta', 7.3),
             LTDItem('pickled plum', 1),
-            LTDItem('pickles / gherkins', 2),
+            LTDItem(LTDName('pickles', 'gherkins'), 2),
             LTDItem('pizza', 3.9),
             LTDItem('poke', 15),
             LTDItem('polenta', 5.8),
@@ -393,7 +420,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('roast goose', 15),
             LTDItem('roast lamb', 12),
             LTDItem('roast turkey', 33),
-            LTDItem('roasted leg of lamb / roasted lamb leg', 17),
+            LTDItem(LTDName('roasted leg of lamb', 'roasted lamb leg'), 17),
             LTDItem('rollmop herrings', 5.4),
             LTDItem('ruined meal', 0.2),
             LTDItem('salad', 5.6),
@@ -418,12 +445,12 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('seolleongtang', 6),
             LTDItem('shrimp pilaf', 7),
             LTDItem('shumai', 1.2),
-            LTDItem('sliced sea bream / sea bream sashimi', 38),
+            LTDItem(LTDName('sliced sea bream', 'sea bream sashimi'), 38),
             LTDItem('smoked salmon', 9),
             LTDItem('sotteok sotteok', 7.8),
             LTDItem('space food', 20),
             LTDItem('spaghetti', 7.8),
-            LTDItem('spaghetti aglio e olio / spaghetti peperoncino', 7.8),
+            LTDItem(LTDName('spaghetti aglio e olio', 'spaghetti peperoncino'), 7.8),
             LTDItem('spicy pollack roe', 7.8),
             LTDItem('spinach', 2),
             LTDItem('split-pea soup', 4.7),
@@ -469,7 +496,7 @@ class TomodachiLifeLTDGame(Game):
     @cached_property
     def food_desserts(self) -> list[LTDItem]:
         """
-        The food items classified as 'Dessert' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/u/0/d/1iPb1freZ57gP7tBDMbvIUi3cDvIE979COqlDsRTYu3Y/htmlview#gid=415930329. Follows the format 'American name / Australian name'.
+        The food items classified as 'Dessert' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/d/1TyLMb9qR52tpPSeCWo3kovkHwIGDUlJQYmKz77NHAIE/htmlview#gid=415930329.
 
         Returns:
             list[LTDItem]: The list of 'Dessert' food items.
@@ -479,25 +506,24 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('apple', 1.5),
             LTDItem('apple crumble', 6.8),
             LTDItem('apple pie', 4.8),
-            # TODO: LTDItem('angel wings', 8), is not listed as a dessert in America
             LTDItem('baked sweet potato', 3.8),
             LTDItem('banana', 1),
             LTDItem('banana peel', 0.2),
             LTDItem('banana split', 6.5),
             LTDItem('beef jerky', 3),
-            # TODO: LTDItem('birthday cake', 0), has $0 cost, verify in-game before adding
+            LTDItem('birthday cake', None),
             LTDItem('biscuit', 1.5),
-            LTDItem('Black Forest cake / Black Forest gateau', 4.5),
+            LTDItem(LTDName('Black Forest cake', 'Black Forest gateau'), 4.5),
             LTDItem('brownie', 4.2),
             LTDItem('bubble waffle', 9.8),
-            LTDItem('bugnes', 8),
+            LTDItem(LTDName('bugnes', 'angel wings'), 8),
             LTDItem('bundkuchen', 6.2),
             LTDItem('butter cookie', 1.8),
             LTDItem('candy apple', 2.5),
             LTDItem('candy corn', 0.75),
             LTDItem('canelé', 4),
             LTDItem('cannoli', 2),
-            LTDItem('caramelized nuts / caramelised nuts', 5.7),
+            LTDItem(LTDName('caramelized nuts', 'caramelised nuts'), 5.7),
             LTDItem('carrot cake', 5.3),
             LTDItem('castella cake', 5),
             LTDItem('cheesecake', 4.9),
@@ -539,15 +565,15 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('grapefruit', 3),
             LTDItem('grapes', 4.9),
             LTDItem('gummy candy', 1),
-            LTDItem('handmade chocolates / handmade chocolate', 30),
-            LTDItem('hard candy / boiled sweet', 0.5),
+            LTDItem(LTDName('handmade chocolates', 'handmade chocolate'), 30),
+            LTDItem(LTDName('hard candy', 'boiled sweet'), 0.5),
             LTDItem('honey', 4.5),
             LTDItem('ice-cream cone', 2.5),
             LTDItem('ice-cream sandwich', 3.1),
             LTDItem('key lime pie', 4.6),
             LTDItem('king cake', 5.2),
             LTDItem('kiwi', 1.5),
-            LTDItem('licorice / liquorice', 0.7),
+            LTDItem(LTDName('licorice', 'liquorice'), 0.7),
             LTDItem('lollipop', 3),
             LTDItem('macadamia nuts', 5),
             LTDItem('macaron', 3),
@@ -557,7 +583,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('melon', 10),
             LTDItem('mince pie', 2),
             LTDItem('mint candy', 0.2),
-            # TODO: LTDItem('mithai', 0), has $0 cost, verify in-game before adding
+            LTDItem('mithai', None),
             LTDItem('muffin', 3.3),
             LTDItem('napoleon cake', 6.2),
             LTDItem('natillas', 2.5),
@@ -565,7 +591,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('orange', 1),
             LTDItem('oriental melon', 1),
             LTDItem('pain au chocolat', 1.2),
-            LTDItem('pain aux raisins / raisin bread', 1.5),
+            LTDItem(LTDName('pain aux raisins', 'raisin bread'), 1.5),
             LTDItem('pancakes', 4),
             LTDItem('pandoro', 5.5),
             LTDItem('panettone', 2),
@@ -591,7 +617,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem("s'more", 3),
             LTDItem('saltine crackers', 1),
             LTDItem('shaved ice', 1.5),
-            LTDItem('soft-serve ice cream / soft ice cream', 2.5),
+            LTDItem(LTDName('soft-serve ice cream', 'soft ice cream'), 2.5),
             LTDItem('songpyeon', 6),
             LTDItem('soufflé', 5),
             LTDItem('stollen', 8),
@@ -608,7 +634,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('turrones', 5.2),
             LTDItem('waffle', 2),
             LTDItem('walnuts', 3),
-            LTDItem('watermelon / watermelon slice', 2),
+            LTDItem(LTDName('watermelon', 'watermelon slice'), 2),
             LTDItem('yogurt', 1.9),
             LTDItem('yokan', 5.8),
             LTDItem('Yule log', 9),
@@ -618,7 +644,7 @@ class TomodachiLifeLTDGame(Game):
     @cached_property
     def food_drinks(self) -> list[LTDItem]:
         """
-        The food items classified as 'Drinks' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/u/0/d/1iPb1freZ57gP7tBDMbvIUi3cDvIE979COqlDsRTYu3Y/htmlview#gid=415930329. Follows the format 'American name / Australian name'.
+        The food items classified as 'Drinks' in Tomodachi Life: Living the Dream. Derived from https://docs.google.com/spreadsheets/d/1TyLMb9qR52tpPSeCWo3kovkHwIGDUlJQYmKz77NHAIE/htmlview#gid=415930329.
 
         Returns:
             list[LTDItem]: The list of 'Drinks' food items.
@@ -637,7 +663,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('hot chocolate', 4),
             LTDItem('iced latte', 4),
             LTDItem('lemonade', 2.5),
-            # TODO: LTDItem('matcha', 0), has $0 cost, verify in-game before adding
+            LTDItem('matcha', None),
             LTDItem('milk', 1.8),
             LTDItem('milkshake', 2),
             LTDItem('omija-cha', 4.5),
@@ -655,33 +681,75 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('yerba mate', 5.4),
         ]
 
-    # TODO: Only some clothes have been implemented, use item database to populate the rest
-
     @cached_property
-    def clothing_sets(self) -> list[LTDItem]:
+    def clothing_outfits(self) -> list[LTDItem]:
         return [
-            LTDItem('ABC loungewear set', 25.7),
+            LTDItem(LTDName('ABC-loungewear outfit', 'ABC loungewear set'), 25.7),
             LTDItem('Aerobics outfit', 38.9),
-            LTDItem('Art explosion combo', 40),
+            LTDItem('All-black outfit', 69.7),
+            LTDItem('All-out summer-vacay outfit', 39),
+            LTDItem('Angel costume', 67.9),
+            LTDItem('Anorak-jacket outfit', 48.6),
+            LTDItem('Argyle-vest outfit', 32.8),
+            LTDItem('Aristocratic-coat costume', 1643.1),
+            # TODO: LTDItem('Art explosion combo', 40), is not an American item
+            LTDItem(LTDName('Astronaut costume', 'Space suit'), 5000),
+            LTDItem('B-3 outfit', 60.8),
+            LTDItem('Baby-bird costume', 48),
+            LTDItem('Baby-snapsuit outfit', 46),
+            LTDItem('Baji jeogori outfit', 60.3),
             LTDItem('Baseball uniform', 60),
-            LTDItem('Bow and blazer outfit', 37.4),
-            LTDItem('Bow and shirt outfit', 34.4),
-            LTDItem('Bow tie and suspender outfit', 31.1),
-            LTDItem('Bunny costume', 56),
-            LTDItem('Busy traffic T-shirt combo', 32.4),
-            LTDItem('Cardboard robot outfit', 12),
-            LTDItem('Casual cardigan combo', 37.4),
-            LTDItem('Casual jacket combo', 33.8),
-            LTDItem('Changshan set', 42.5),
-            LTDItem('Cheerleader set', 41),
-            LTDItem('Collarless coat combo', 44.2),
-            LTDItem('Colourful plaid combo', 60.8),
-            LTDItem('Colourful shirt combo', 40.4),
-            LTDItem('Combat shorts combo', 31.5),
-            LTDItem('Compression set', 44.2),
-            LTDItem('Construction worker outfit', 48.2),
-            LTDItem('Cosmic combo', 56.7),
+            LTDItem('Basic-dress-shirt outfit', 33.4),
+            LTDItem('Basic-pullover outfit', 31.8),
+            LTDItem('Basic-sweatshirt outfit', 31.2),
+            LTDItem('Basic-tee outfit', 30.9),
+            LTDItem('Basic-turtleneck outfit', 31.7),
+            LTDItem('Basketball uniform', 35.7),
+            LTDItem('Bear costume', 51),
+            LTDItem('Bear-ear-cap outfit', 49.8),
+            LTDItem('Bee costume', 45),
+            LTDItem('Biker outfit', 65.5),
+            LTDItem('Bird costume', 51),
+            LTDItem('Blazer-with-necktie outfit', 37.4),
+            LTDItem('Bodysuit outfit', 35),
+            LTDItem('Bomber-jacket outfit', 32.3),
+            # TODO: LTDItem('Bow and blazer outfit', 37.4), is not an American item
+            # TODO: LTDItem('Bow and shirt outfit', 34.4), is not an American item
+            # TODO: LTDItem('Bow tie and suspender outfit', 31.1), is not an American item
+            LTDItem('Breezy business outfit', 31.2),
+            # TODO: LTDItem('Bunny costume', 56), is not an American item
+            LTDItem('Business suit & tie outfit', 42.5),
+            # TODO: LTDItem('Busy traffic T-shirt combo', 32.4), is not an American item
+            LTDItem('Cardboard-box costume', 10),
+            LTDItem(LTDName('Cardboard-robot costume', 'Cardboard robot outfit'), 12),
+            LTDItem('Cargo-shorts outfit', 31.5),
+            LTDItem(LTDName('Casual cardigan outfit', 'Casual cardigan combo'), 37.4),
+            # TODO: LTDItem('Casual jacket combo', 33.8), is not an American item
+            LTDItem('Casual-kimono outfit', 59.5),
+            LTDItem('Casual vest outfit', 53),
+            LTDItem('Catcher uniform', 75),
+            LTDItem('Cat costume', 44),
+            # TODO: LTDItem('Changshan set', 42.5), is not an American item
+            # TODO: LTDItem('Cheerleader set', 41), is not an American item
+            LTDItem('Chef outfit', 53.9),
+            LTDItem('Cheongsam outfit', 42.5),
+            LTDItem('Chicken costume', 63),
+            LTDItem('City-walk outfit', 49.1),
+            LTDItem('Coach-jacket outfit', 37.1),
+            LTDItem(LTDName('Collarless-coat outfit', 'Collarless coat combo'), 44.2),
+            LTDItem('Color-blocked-tee outfit', 33.4),
+            LTDItem('Comfy sweats outfit', 28),
+            # TODO: LTDItem('Colourful plaid combo', 60.8), is not an American item
+            # TODO: LTDItem('Colourful shirt combo', 40.4), is not an American item
+            # TODO: LTDItem('Combat shorts combo', 31.5), is not an American item
+            LTDItem(LTDName('Compression outfit', 'Compression set'), 44.2),
+            LTDItem('Cool leather outfit', 57.7),
+            LTDItem('Corduroy outfit', 40.1),
+            # TODO: LTDItem('Construction worker outfit', 48.2), is not an American item
+            LTDItem(LTDName('Cosmic outfit', 'Cosmic combo'), 56.7),
+            LTDItem('Country outfit', 53.3),
             LTDItem('Cow costume', 45),
+            # TODO: Resume adding clothing from here
             LTDItem('Cyberpunk set', 46.6),
             LTDItem('Dark dolly set', 56.6),
             LTDItem('Dotted shirt combo', 33.6),
@@ -734,7 +802,6 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Sheep costume', 50),
             LTDItem('Short-sleeved cardie combo', 32.9),
             LTDItem('Sleeveless shirt outfit', 32.4),
-            LTDItem('Space suit', 5000),
             LTDItem('Sporty tracksuit set', 32),
             LTDItem('Star T-shirt combo', 32),
             LTDItem('Striped long-sleeved set', 41.9),
@@ -870,6 +937,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Dungaree dress', 25),
             LTDItem('Dungarees', 25.6),
             LTDItem('Flapper dress', 50),
+            LTDItem('Floral dress', 25),
             LTDItem('Flower dress', 27),
             LTDItem("Hemp leaf men's yukata", 37.8),
             LTDItem('Kandora', 39),
@@ -943,6 +1011,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Tennis skirt', 9),
             LTDItem('Tiered skirt', 11.5),
             LTDItem('Tracksuit bottoms', 9),
+            LTDItem('Tulie skirt', 10),
             LTDItem('Tweed pencil skirt', 30),
             LTDItem('Unicolour trousers', 8.5),
         ]
@@ -1179,7 +1248,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('dance music album', 30),
             LTDItem('dancing game', 38),
             LTDItem('Daruma-otoshi game', 5),
-            LTDItem('dating-sim game / dating sim game', 53),
+            LTDItem(LTDName('dating-sim game', 'dating sim game'), 53),
             LTDItem('die', 1),
             LTDItem('disco ball', 200),
             LTDItem('embroidered decoration', 33),
@@ -1220,12 +1289,13 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('racing game', 55),
             LTDItem('reggae album', 25),
             LTDItem('restaurant menu', 12),
-            LTDItem("rock album / rock 'n' roll album", 25),
+            LTDItem(LTDName('rock album', "rock 'n' roll album"), 25),
             LTDItem('roll of toilet paper', 1),
             LTDItem('romantic drama', 15),
             LTDItem('rose', 10),
             LTDItem('rubber duck', 4),
             LTDItem('sci-fi film', 20),
+            LTDItem('sea urchin skeleton', 0.1),
             LTDItem('shark', 150),
             LTDItem('ship in a bottle', 45),
             LTDItem('solar panel', 150),
@@ -1572,7 +1642,7 @@ class TomodachiLifeLTDGame(Game):
 
     def get_item_strings(self, items: list[LTDItem]) -> list[str]:
         """
-        Converts a list of Tomodachi Life: Living the Dream items with names and costs into a list of strings. The strings are duplicated based on the costs of the items, to ensure that cheaper items are found more commonly in the list.
+        Converts a list of Tomodachi Life: Living the Dream items with names and costs into a list of strings. The strings are duplicated based on the costs of the items, to ensure that cheaper items are found more commonly in the list. Items with no cost can only be obtained under special circumstances, so they are assumed to have the maximum cost.
 
         Args:
             items (list[LTDItem]): The list of items to convert.
@@ -1584,24 +1654,47 @@ class TomodachiLifeLTDGame(Game):
         min_cost: float = float("inf")
         max_cost: float = 0
         for item in items:
-            if self.item_is_trash(item):
+            if self.item_is_trash(item) or item.cost is None:
                 continue
             min_cost = min(min_cost, item.cost)
             max_cost = max(max_cost, item.cost)
         # Duplicate items based on their costs, cheaper items appear more frequently
         cost_diff: float = max_cost - min_cost
+        region: int = self.archipelago_options.tomodachi_life_region.value
         if cost_diff == 0:
-            return [item.name for item in items if not self.item_is_trash(item)]
+            return [
+                (
+                    item.name
+                    if isinstance(item.name, str)
+                    else (
+                        item.name.na
+                        if region == TomodachiLifeLTDRegion.option_north_america
+                        else item.name.eu
+                    )
+                )
+                for item in items
+                if not self.item_is_trash(item)
+            ]
         weighted_items: list[str] = []
         for item in items:
             if self.item_is_trash(item):
                 continue
+            if item.cost is None:
+                item.cost = max_cost
             item_weight: int = (
                 round(((max_cost - item.cost) / cost_diff) * (self.ITEM_MAX_WEIGHT - 1))
                 + 1
             )
             for _ in range(item_weight):
-                weighted_items.append(item.name)
+                weighted_items.append(
+                    item.name
+                    if isinstance(item.name, str)
+                    else (
+                        item.name.na
+                        if region == TomodachiLifeLTDRegion.option_north_america
+                        else item.name.eu
+                    )
+                )
         return weighted_items
 
     def miis(self) -> list[str]:
@@ -1626,7 +1719,7 @@ class TomodachiLifeLTDGame(Game):
     def clothing(self) -> list[str]:
         clothing: list[str] = self.get_item_strings(
             [
-                *self.clothing_sets,
+                *self.clothing_outfits,
                 *self.clothing_shirts,
                 *self.clothing_dresses,
                 *self.clothing_pants,
@@ -1754,8 +1847,9 @@ class TomodachiLifeLTDGame(Game):
     @staticmethod
     def bonus_objectives_base() -> list[str]:
         bonuses_base: list[str] = [
+            'Allow a Mii to run up to another Mii',
             'Allow a Mii to style their own hair',
-            "Answer a Mii's quick chat question",
+            "Answer a Mii's 'quick chat' question with a typed response",
             "Change the island's terrain using the Island Builder",
             'Create new clothing at the Studio Workshop',
             'Create a new exterior at the Studio Workshop',
@@ -1776,29 +1870,34 @@ class TomodachiLifeLTDGame(Game):
             'Do an All Residents photoshoot at the Photo Studio',
             "Edit a Mii's appearance",
             "Edit a Mii's voice",
+            "Edit an existing creation at the Studio Workshop",
             'Give a Mii $10 in pocket money',
             'Give a Mii $50 in pocket money',
             'Give a Mii $100 in pocket money',
             'Give a Mii $250 in pocket money',
             'Give a Mii clothing as a level-up gift',
             'Grant a wish from the Wishing Fountain',
+            'Help a Mii make up with an angry Mii',
             'Help a paralysed Mii using another Mii',
             'Help a paralysed Mii yourself',
             'Introduce a Mii to another Mii they are strangers to',
-            'Let a Mii place an object themselves',
+            'Let a Mii conduct a construction project',
+            'Let a Mii place a single object on the island',
             "Listen to a Mii's random thought",
-            "Look in a Mii's dream",
-            'Observe a normal conversation in the Restaurant',
-            'Observe a theatrical conversation in the Restaurant',
+            "Look inside a Mii's dream",
+            'Observe a dismissive conversation in the Restaurant',
             'Observe a Mii performing an action based on a prezzie',
+            'Observe a normal conversation in the Restaurant',
+            'Observe a romantic conversation in the Restaurant',
+            'Observe a theatrical conversation in the Restaurant',
             'Observe a Mii spontaneously fall for another Mii',
             'Pet a Mii to dispel their anger',
             'Pet a Mii to dispel their sadness',
-            # The below covers both Latte Art Quiz and Moving Cups, as I personally have not seen Latte Art Quiz for a long time during my playthrough
-            'Play a game in the Restaurant',
             'Play a game of Bowling',
             'Play a game of Coin Spin',
             'Play a game of Double Shadow Quiz',
+            'Play a game of Latte Art Quiz',
+            'Play a game of Moving Cups',
             'Play a game of No Repeats (in a group or not)',
             'Play a game of Odd One Out',
             'Play a game of Pixel Quiz',
@@ -1810,7 +1909,7 @@ class TomodachiLifeLTDGame(Game):
             'Remove a Mii',
             'Save and trim a Nintendo Switch video recording of the game',
             'Save your progress',
-            'Sell treasures at the Pawn Shop',
+            'Sell extra copies of treasures at the Pawn Shop',
             "Solve a Mii's personal problem",
             "Solve a Mii's problem related to another Mii",
             "Solve a Mii's romantic problem",
