@@ -666,6 +666,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Baseball uniform', 60),
             LTDItem('Bow and blazer outfit', 37.4),
             LTDItem('Bow and shirt outfit', 34.4),
+            LTDItem('Bow tie and suspender outfit', 31.1),
             LTDItem('Bunny costume', 56),
             LTDItem('Busy traffic T-shirt combo', 32.4),
             LTDItem('Cardboard robot outfit', 12),
@@ -698,6 +699,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Kung fu outfit', 35),
             LTDItem('Lace polo neck combo', 62.9),
             LTDItem('Lemon enthusiast outfit', 29),
+            LTDItem('Letterman cardigan combo', 34.1),
             LTDItem('Long-sleeved striped combo', 53),
             LTDItem('Long-sleeved tee & skirt set', 44.9),
             LTDItem('Loose T-shirt dress combo', 42.3),
@@ -727,6 +729,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Punky skirt combo', 44.5),
             LTDItem('Qipao set', 55.6),
             LTDItem('Samurai outfit', 794.5),
+            LTDItem('School uniform', 35.5),
             LTDItem('Shampoo bathrobe combo', 32.2),
             LTDItem('Sheep costume', 50),
             LTDItem('Short-sleeved cardie combo', 32.9),
@@ -738,6 +741,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Subdued kimono set', 59.5),
             LTDItem('Summer cardigan combo', 34),
             LTDItem('Sunny-side-up T-shirt combo', 32),
+            LTDItem('Suspender combo', 62),
             LTDItem('Triangles T-shirt combo', 33.4),
             LTDItem('Two piece skirt suit', 117.6),
             LTDItem('Urban hiking combo', 49.1),
@@ -751,6 +755,7 @@ class TomodachiLifeLTDGame(Game):
     def clothing_shirts(self) -> list[LTDItem]:
         return [
             LTDItem('Accent-striped polo shirt', 11),
+            LTDItem('Animal T-shirt', 14),
             LTDItem('Anorak jacket', 13),
             LTDItem('Argyle vest', 11),
             LTDItem('Balmacaan coat', 18),
@@ -789,8 +794,10 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Lace polo neck', 14.3),
             LTDItem('Leopard T-shirt', 16.5),
             LTDItem('Letterman cardigan', 12),
+            LTDItem('Long-sleeved crop top', 13),
             LTDItem('Long-sleeved striped T-shirt', 13),
             LTDItem('Mackintosh raincoat', 11.5),
+            LTDItem('Male school uniform top', 15),
             LTDItem('Mii logo pullover jacket', 11),
             LTDItem('Mii logo T-shirt', 12),
             LTDItem('Motorcycle jacket', 20),
@@ -810,6 +817,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Polo neck pullover', 17),
             LTDItem('Quirky patterned shirt', 13),
             LTDItem('Rectangular Mii logo T-shirt', 15),
+            LTDItem('Ringer T-shirt', 10),
             LTDItem('Rock band T-shirt', 13.4),
             LTDItem('Rugby jersey', 12),
             LTDItem('Running vest', 11.5),
@@ -825,6 +833,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Steampunk coat', 33.5),
             LTDItem('Striped long-sleeved T-shirt', 12.2),
             LTDItem('Striped loungewear', 12),
+            LTDItem('Stripy mix shirt', 13.5),
             LTDItem('Suit jacket', 20),
             LTDItem('Summer cardigan', 11),
             LTDItem('Sunny-side-up T-shirt', 12),
@@ -888,6 +897,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Basic wide-leg trousers', 11.5),
             LTDItem('Boxing shorts', 7.5),
             LTDItem('Bubble shorts', 9),
+            LTDItem('Capri pants', 11),
             LTDItem('Chino shorts', 8.1),
             LTDItem('Chinos', 10),
             LTDItem('Colourful plaid trousers', 9.8),
@@ -913,6 +923,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Lace pencil skirt', 14),
             LTDItem('Lemon pattern skirt', 12),
             LTDItem('Leopard pattern maxi skirt', 12),
+            LTDItem('Leopard pattern trousers', 12),
             LTDItem('Long pencil skirt', 12.2),
             LTDItem('Multi stripe trousers', 8.9),
             LTDItem('Patchwork maxi skirt', 9.4),
@@ -959,6 +970,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Flower hair pin', 8.7),
             LTDItem('Flower headdress', 21.3),
             LTDItem('Flower hood', 20),
+            LTDItem('Frill headdress', 32),
             LTDItem('Froggy hood', 26),
             LTDItem('Granny square bucket hat', 15.5),
             LTDItem('Hamster hood', 26),
@@ -972,6 +984,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Open face helmet', 23),
             LTDItem('Paper bag', 2),
             LTDItem('Pixel sunglasses', 10),
+            LTDItem('Plaid baker boy cap', 18.5),
             LTDItem('Plaid beret', 20),
             LTDItem('Plain baseball cap', 10),
             LTDItem('Plain beanie', 10),
@@ -987,6 +1000,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Snorkelling set', 18),
             LTDItem('Space suit helmet', 2000),
             LTDItem('Spangly hat', 25),
+            LTDItem('Star sunglasses', 14),
             LTDItem('Tower hair wrap', 6),
             LTDItem('Tulip hat', 15),
             LTDItem('Turkey hood', 35),
@@ -1000,11 +1014,13 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Basic scarf', 17),
             LTDItem('Bead necklace', 15),
             LTDItem('Bow tie', 7),
+            LTDItem('Butterfly wings', 17),
             LTDItem('Buttonhole flower', 49),
             LTDItem('Chain necklace', 16),
             LTDItem('Cow tail', 12),
             LTDItem('Cute badge', 6.1),
             LTDItem('Fairy wings', 18),
+            LTDItem('Flower garland', 16),
             LTDItem('Happy flowers', 5),
             LTDItem('Headphones', 16),
             LTDItem('Katana', 100),
@@ -1034,6 +1050,7 @@ class TomodachiLifeLTDGame(Game):
     def clothing_socks(self) -> list[LTDItem]:
         return [
             LTDItem('Ankle socks', 4.8),
+            LTDItem('Back ribbon socks', 5.2),
             LTDItem('Colourful plaid socks', 5.5),
             LTDItem('Compression leg sleeves', 8.2),
             LTDItem('Corduroy legwarmers', 5.2),
@@ -1086,6 +1103,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Princess shoes', 30),
             LTDItem('Punk boots', 9),
             LTDItem('Ribbon bow pumps', 7.5),
+            LTDItem('Ribbon bow strappy pumps', 7.7),
             LTDItem('Roman sandals', 5.9),
             LTDItem('Rubber slippers', 5.5),
             LTDItem('Rubber-toed high-tops', 7.8),
@@ -1100,6 +1118,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Strappy pumps', 6.9),
             LTDItem('Studded dress shoes', 11),
             LTDItem('Track spikes', 6),
+            LTDItem('Trekking boots', 8),
             LTDItem('Vintage boots', 8),
             LTDItem('Wellies', 6.7),
             LTDItem('Zebra pattern pumps', 7.3),
@@ -1120,6 +1139,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('Daruma outfit', 23),
             LTDItem('Dustbin outfit', 18),
             LTDItem('Fizzy drink outfit', 24),
+            LTDItem('Fried prawn outfit', 25),
             LTDItem('Froggy outfit', 26.6),
             LTDItem('Hamster outfit', 25),
             LTDItem('Heavy metal outfit', 31.5),
@@ -1147,6 +1167,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('bottle of perfume', 51),
             LTDItem('bouquet', 40),
             LTDItem('box of tissues', 1.2),
+            LTDItem('bunch of carnations', 10),
             LTDItem('call bell', 5),
             LTDItem('ceremonial mountain of buns', 33),
             LTDItem('chess piece', 3),
@@ -1157,11 +1178,13 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('cut-glass ornament', 50),
             LTDItem('dance music album', 30),
             LTDItem('dancing game', 38),
+            LTDItem('Daruma-otoshi game', 5),
             LTDItem('dating-sim game / dating sim game', 53),
             LTDItem('die', 1),
             LTDItem('disco ball', 200),
             LTDItem('embroidered decoration', 33),
             LTDItem('flamingo', 150),
+            LTDItem('foxtail frond', 0.2),
             LTDItem('globe', 34),
             LTDItem('gold ingot', 1000),
             LTDItem('hand mirror', 17),
@@ -1214,6 +1237,7 @@ class TomodachiLifeLTDGame(Game):
             LTDItem('tap', 4),
             LTDItem('tawashi scrub brush', 1),
             LTDItem('treasure map', 99),
+            LTDItem('tuna', 150),
             LTDItem('UFO', 58),
             LTDItem('unicorn', 300),
             LTDItem('vacuum tube', 18),
@@ -1583,8 +1607,8 @@ class TomodachiLifeLTDGame(Game):
     def miis(self) -> list[str]:
         return self.archipelago_options.tomodachi_life_living_the_dream_miis.value
 
-    def foods(self) -> list[str]:
-        foods: list[str] = self.get_item_strings(
+    def food(self) -> list[str]:
+        food: list[str] = self.get_item_strings(
             [*self.food_food, *self.food_desserts, *self.food_drinks]
         )
         if (
@@ -1592,12 +1616,12 @@ class TomodachiLifeLTDGame(Game):
             in self.archipelago_options.tomodachi_life_living_the_dream_creations.value.keys()
         ):
             for _ in range(self.ITEM_MAX_WEIGHT):
-                foods.extend(
+                food.extend(
                     self.archipelago_options.tomodachi_life_living_the_dream_creations.value[
                         "food"
                     ]
                 )
-        return foods
+        return food
 
     def clothing(self) -> list[str]:
         clothing: list[str] = self.get_item_strings(
@@ -1843,7 +1867,7 @@ class TomodachiLifeLTDGame(Game):
         objectives: list[GameObjectiveTemplate] = [
             GameObjectiveTemplate(
                 label=f"Feed FOOD{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''} to any Mii",
-                data={"FOOD": (self.foods, 1)},
+                data={"FOOD": (self.food, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_named_food"] * factor,
@@ -1984,7 +2008,7 @@ class TomodachiLifeLTDGame(Game):
                     ),
                     GameObjectiveTemplate(
                         label=f"Feed FOOD{' if unlocked' if self.archipelago_options.tomodachi_life_living_the_dream_skip_locked_items.value else ''} to MII",
-                        data={"FOOD": (self.foods, 1), "MII": (self.miis, 1)},
+                        data={"FOOD": (self.food, 1), "MII": (self.miis, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=weights["named_mii_named_food"] * factor,
