@@ -749,66 +749,215 @@ class TomodachiLifeLTDGame(Game):
             LTDItem(LTDName('Cosmic outfit', 'Cosmic combo'), 56.7),
             LTDItem('Country outfit', 53.3),
             LTDItem('Cow costume', 45),
-            # TODO: Resume adding clothing from here
-            LTDItem('Cyberpunk set', 46.6),
-            LTDItem('Dark dolly set', 56.6),
-            LTDItem('Dotted shirt combo', 33.6),
-            LTDItem('Duffle coat and skirt combo', 58.2),
-            LTDItem('Fizzy drink costume', 31),
+            LTDItem('Cowichan-sweater outfit', 33.3),
+            LTDItem('Crazy-color-shirt outfit', 40.4),
+            LTDItem(LTDName('Cyberpunk costume', 'Cyberpunk set'), 46.6),
+            LTDItem('Cycling uniform', 65.7),
+            # TODO: LTDItem('Dark dolly set', 56.6), is not an American item
+            LTDItem('Denim-jacket outfit', 31.8),
+            LTDItem('Detective outfit', 57.8),
+            LTDItem('Devil costume', 58.6),
+            LTDItem('Dinosaur costume', 60),
+            LTDItem('Disco-star outfit', 81.4),
+            LTDItem('Diving costume', 87),
+            LTDItem('DJ outfit', 62.4),
+            LTDItem('Dog costume', 50),
+            LTDItem('Dog-logo-tracksuit outfit', 50.5),
+            LTDItem(LTDName('Dotted-shirt outfit', 'Dotted shirt combo'), 33.6),
+            LTDItem('Dotted-shirt outfit', 33.6),
+            LTDItem('Down-jacket outfit', 34),
+            LTDItem('Dragon costume', 95),
+            # TODO: LTDItem('Duffle coat and skirt combo', 58.2), is not an American item
+            LTDItem('Exercise outfit', 48.5),
+            LTDItem('Explorer outfit', 77.6),
+            LTDItem('Far-future costume', 60),
+            LTDItem('Figure-skating costume', 50),
+            LTDItem('Firefighter outfit', 83.5),
+            LTDItem('Fish-folk costume', 55),
+            LTDItem('Flannel-shirt outfit', 33.5),
+            LTDItem('Fleece-pullover outfit', 48.3),
             LTDItem('Flower costume', 45),
+            LTDItem('Fly-fisher outfit', 58.9),
+            LTDItem('Football uniform', 69),
+            LTDItem('Formal suspenders outfit', 46.5),
+            LTDItem('Formal vest outfit', 38.5),
             LTDItem('Frog costume', 52.6),
-            LTDItem('Gingham combo', 33.7),
-            LTDItem('Gym outfit', 48.5),
+            LTDItem('Fruit-print-tee outfit', 26.5),
+            LTDItem('Garden-gnome costume', 56),
+            LTDItem('Gaudy-suit outfit', 40.2),
+            LTDItem('Geometric-print-tee outfit', 51.8),
+            LTDItem(LTDName('Gingham outfit', 'Gingham combo'), 33.7),
+            LTDItem('Gladiator costume', 234.9),
+            LTDItem('Goodnight pajama outfit', 32),
+            LTDItem('Gothic prince outfit', 48.7),
+            LTDItem('Graduation outfit', 52.6),
+            LTDItem('Grunge outfit', 50.9),
+            # TODO: LTDItem('Gym outfit', 48.5), is not an American item
             LTDItem('Hamster costume', 51),
-            LTDItem('Heart-heavy combo', 42.4),
-            LTDItem("Hemp leaf men's yukata set", 45.8),
-            LTDItem('Inspirational T-shirt combo', 32.2),
+            LTDItem(LTDName('Heart-to-heart outfit', 'Heart-heavy combo'), 42.4),
+            LTDItem(
+                LTDName('Hemp-leaf-yukata outfit', "Hemp leaf men's yukata set"), 45.8
+            ),
+            LTDItem('Hero costume', 69.8),
+            LTDItem('Hibiscus-print-shirt outfit', 25.4),
+            LTDItem('Hiking outfit', 33.8),
+            LTDItem('Hip-hop outfit', 83.2),
+            LTDItem('Holiday-party outfit', 62.2),
+            LTDItem('Holiday-tree costume', 61),
+            LTDItem('Horse costume', 63),
+            LTDItem('Hot-dog costume', 55),
+            LTDItem('Ice-cream-tee outfit', 31.8),
+            LTDItem('Ice-hockey uniform', 71),
+            LTDItem("Jack-o'-lantern costume", 57),
+            LTDItem('Japanese-print outfit', 46.8),
+            LTDItem('Jester costume', 51),
             LTDItem('Jockey uniform', 57.2),
-            LTDItem('Kung fu outfit', 35),
-            LTDItem('Lace polo neck combo', 62.9),
-            LTDItem('Lemon enthusiast outfit', 29),
-            LTDItem('Letterman cardigan combo', 34.1),
-            LTDItem('Long-sleeved striped combo', 53),
-            LTDItem('Long-sleeved tee & skirt set', 44.9),
-            LTDItem('Loose T-shirt dress combo', 42.3),
-            LTDItem('Lumberjack combo', 33.5),
+            LTDItem('Jogging outfit', 40.1),
+            LTDItem('Knight costume', 1070),
+            LTDItem('Koala costume', 63),
+            LTDItem(LTDName('Kung-fu uniform', 'Kung fu outfit'), 35),
+            LTDItem('Kurta outfit', 42.4),
+            LTDItem('Lab-coat outfit', 31.4),
+            # TODO: LTDItem('Lace polo neck combo', 62.9), is not an American item
+            # TODO: LTDItem('Lemon enthusiast outfit', 29), is not an American item
+            LTDItem(
+                LTDName('Lettered-tee outfit', 'Inspirational T-shirt combo'), 32.2
+            ),
+            # TODO: LTDItem('Letterman cardigan combo', 34.1), is not an American item
+            LTDItem('Lion costume', 63),
+            LTDItem(
+                LTDName(
+                    'Long-sleeve deck-striped outfit', 'Long-sleeved striped combo'
+                ),
+                53,
+            ),
+            LTDItem('Long-sleeve striped-tee outfit', 41.9),
+            # TODO: LTDItem('Long-sleeved tee & skirt set', 44.9), is not an American item
+            # TODO: LTDItem('Loose T-shirt dress combo', 42.3), is not an American item
+            LTDItem('Luchador uniform', 64.1),
+            # TODO: LTDItem('Lumberjack combo', 33.5), is not an American item
             LTDItem('Marathon outfit', 34.7),
-            LTDItem('Mii logo T-shirt combo', 33.7),
+            LTDItem('Mid-shower-doorbell outfit', 32.2),
+            LTDItem('Mid-shower-phone-call outfit', 22),
+            # TODO: LTDItem('Mii logo T-shirt combo', 33.7), is not an American item
             LTDItem('Monkey costume', 46),
-            LTDItem('Motorcycling combo', 65.5),
-            LTDItem('Necktie and blazer outfit', 37.4),
-            LTDItem('Necktie and suit set', 42.5),
-            LTDItem('Nerd outfit', 66.6),
-            LTDItem('Paisley jacket combo', 34.6),
-            LTDItem('Patchwork maxi skirt combo', 53.1),
-            LTDItem('Pea jacket outfit', 56.7),
-            LTDItem('Phantom thief outfit', 100),
-            LTDItem('Photo print T-shirt combo', 26.5),
-            LTDItem('Pilot uniform', 42.4),
-            LTDItem('Plain collarless shirt combo', 34.8),
-            LTDItem('Plain dress combo', 33.9),
-            LTDItem('Plain dress set', 110.1),
-            LTDItem('Plain dress shirt combo', 33.4),
-            LTDItem('Plain jumper combo', 31.2),
-            LTDItem('Plain skirt suit', 43.1),
-            LTDItem('Plain T-shirt combo', 30.9),
-            LTDItem('Princess attire set', 670.1),
-            LTDItem('Polo-neck jumper combo', 37.8),
-            LTDItem('Punky skirt combo', 44.5),
-            LTDItem('Qipao set', 55.6),
+            LTDItem('Monster costume', 56),
+            # TODO: LTDItem('Motorcycling combo', 65.5), is not an American item
+            LTDItem('Mummy costume', 50),
+            LTDItem('Mushroom costume', 46),
+            LTDItem('Nautical outfit', 56.7),
+            # TODO: LTDItem('Necktie and blazer outfit', 37.4), is not an American item
+            # TODO: LTDItem('Necktie and suit set', 42.5), is not an American item
+            # TODO: LTDItem('Nerd outfit', 66.6), is not an American item
+            LTDItem('Ninja costume', 160.6),
+            LTDItem('Noir-detective outfit', 84.2),
+            LTDItem('Oni costume', 51),
+            LTDItem('Open-school-uniform outfit', 35.9),
+            LTDItem('Open-sized-tee outfit', 51.5),
+            LTDItem('Painter outfit', 40),
+            LTDItem(LTDName('Paisley-jacket outfit', 'Paisley jacket combo'), 34.6),
+            LTDItem('Pastel-suit outfit', 31.9),
+            # TODO: LTDItem('Patchwork maxi skirt combo', 53.1), is not an American item
+            LTDItem('Patterned-shirt outfit', 29.5),
+            LTDItem(LTDName('Peacoat outfit', 'Pea jacket outfit'), 56.7),
+            LTDItem('Penguin costume', 63),
+            LTDItem(LTDName('Phantom-thief costume', 'Phantom thief outfit'), 100),
+            LTDItem('Pharaoh costume', 253.9),
+            LTDItem(
+                LTDName('Photo-print-tee outfit', 'Photo print T-shirt combo'), 26.5
+            ),
+            LTDItem('Pig costume', 63),
+            LTDItem(LTDName('Pilot outfit', 'Pilot uniform'), 42.4),
+            LTDItem('Pineapple costume', 46.1),
+            LTDItem('Pirate costume', 78),
+            LTDItem('Plaid-coat outfit', 38),
+            LTDItem('Plaid-flannel outfit', 33.2),
+            LTDItem('Plaid-jacket outfit', 73.7),
+            # TODO: LTDItem('Plain collarless shirt combo', 34.8), is not an American item
+            # TODO: LTDItem('Plain dress combo', 33.9), is not an American item
+            # TODO: LTDItem('Plain dress set', 110.1), is not an American item
+            # TODO: LTDItem('Plain dress shirt combo', 33.4), is not an American item
+            # TODO: LTDItem('Plain jumper combo', 31.2), is not an American item
+            # TODO: LTDItem('Plain skirt suit', 43.1), is not an American item
+            # TODO: LTDItem('Plain T-shirt combo', 30.9), is not an American item
+            LTDItem('Police uniform', 61.5),
+            LTDItem('Prince costume', 866),
+            # TODO: LTDItem('Princess attire set', 670.1), is not an American item
+            # TODO: LTDItem('Polo-neck jumper combo', 37.8), is not an American item
+            LTDItem(LTDName('Punky cargo-pants outfit', 'Punky skirt combo'), 44.5),
+            # TODO: LTDItem('Qipao set', 55.6), is not an American item
+            LTDItem('Quilted-jacket outfit', 34.6),
+            LTDItem('Rabbit costume', 56),
+            LTDItem('Racing uniform', 77.2),
+            LTDItem('Ragged outfit', 8),
+            LTDItem('Raglan-sweatshirt outfit', 31.5),
+            LTDItem('Rainy-day outfit', 47.7),
+            LTDItem('Reindeer costume', 53),
+            LTDItem('Retro-swimsuit outfit', 46),
+            LTDItem('RN outfit', 53),
+            LTDItem('Rodeo-rider costume', 72.4),
+            LTDItem('Royal costume', 3513.1),
+            LTDItem('Rugby uniform', 48.8),
+            LTDItem('Sage costume', 86.2),
+            LTDItem('Samba costume', 101.9),
             LTDItem('Samurai outfit', 794.5),
+            LTDItem('Santa outfit', 70.6),
+            LTDItem('School outfit', 80.5),
+            LTDItem('School-smock outfit', 44.5),
             LTDItem('School uniform', 35.5),
-            LTDItem('Shampoo bathrobe combo', 32.2),
+            # TODO: LTDItem('Shampoo bathrobe combo', 32.2), is not an American item
             LTDItem('Sheep costume', 50),
-            LTDItem('Short-sleeved cardie combo', 32.9),
-            LTDItem('Sleeveless shirt outfit', 32.4),
-            LTDItem('Sporty tracksuit set', 32),
-            LTDItem('Star T-shirt combo', 32),
-            LTDItem('Striped long-sleeved set', 41.9),
-            LTDItem('Subdued kimono set', 59.5),
-            LTDItem('Summer cardigan combo', 34),
-            LTDItem('Sunny-side-up T-shirt combo', 32),
-            LTDItem('Suspender combo', 62),
+            LTDItem('Shirt-with-necktie outfit', 34.4),
+            # TODO: LTDItem('Short-sleeved cardie combo', 32.9), is not an American item
+            LTDItem('Simple-parka outfit', 58.7),
+            LTDItem('Skeleton costume', 42),
+            LTDItem('Skiing outfit', 52.3),
+            LTDItem('Skull-tee outfit', 64.1),
+            LTDItem('Sleek cyberpunk outfit', 46.6),
+            LTDItem('Sleeveless-knit-top outfit', 61.8),
+            # TODO: LTDItem('Sleeveless shirt outfit', 32.4), is not an American item
+            LTDItem('Sleeveless-turtleneck outfit', 32),
+            LTDItem('Snorkeling outfit', 95),
+            LTDItem('Snowman costume', 50),
+            LTDItem('Soccer uniform', 33.2),
+            LTDItem(LTDName('Soft-drink costume', 'Fizzy drink costume'), 31),
+            LTDItem('Soft-serve costume', 52.9),
+            # TODO: LTDItem('Sporty tracksuit set', 32), is not an American item
+            LTDItem('Sprout costume', 32),
+            LTDItem('Stag-beetle costume', 60),
+            LTDItem(LTDName('Star-print-tee outfit', 'Star T-shirt combo'), 32),
+            LTDItem('Steampunk-coat outfit', 75.2),
+            LTDItem('Store-attendant outfit', 42.6),
+            LTDItem('Street-style layered outfit', 48),
+            LTDItem('Street-style outfit', 82),
+            # TODO: LTDItem('Striped long-sleeved set', 41.9), is not an American item
+            LTDItem('Striped outfit', 33.3),
+            LTDItem('Striped-polo outfit', 30.1),
+            LTDItem('Striped rugby outfit', 35),
+            # TODO: LTDItem('Subdued kimono set', 59.5), is not an American item
+            # TODO: LTDItem('Summer cardigan combo', 34), is not an American item
+            LTDItem('Summer vintage-suit outfit', 60),
+            LTDItem(LTDName('Sunny-side-up outfit', 'Sunny-side-up T-shirt combo'), 32),
+            LTDItem('Superfan outfit', 66.6),
+            LTDItem('Surveyor outfit', 63.2),
+            LTDItem(LTDName('Suspenders outfit', 'Suspender combo'), 62),
+            LTDItem('Swim outfit', 17.8),
+            LTDItem('Tailcoat outfit', 210.4),
+            LTDItem('Tailored-jacket outfit', 33.8),
+            LTDItem('Tam outfit', 60.3),
+            LTDItem('Tennis-sweater outfit', 35.2),
+            LTDItem('Tidy button-down outfit', 34.8),
+            LTDItem('Tie-dye-tee outfit', 27.4),
+            LTDItem('Tiger-baseball-jacket outfit', 33.8),
+            LTDItem('Tiger costume', 68),
+            LTDItem('Toy-robot costume', 64.5),
+            LTDItem('Tracksuit outfit', 32),
+            LTDItem('Tracksuit with shorts outfit', 31),
+            LTDItem('Traffic-guard outfit', 48.2),
+            LTDItem('Traffic-print-tee outfit', 32.4),
+            LTDItem('Tree costume', 54),
+            LTDItem('Trench-coat outfit', 36),
+            # TODO: Resume adding clothing from here
             LTDItem('Triangles T-shirt combo', 33.4),
             LTDItem('Two piece skirt suit', 117.6),
             LTDItem('Urban hiking combo', 49.1),
@@ -1660,7 +1809,9 @@ class TomodachiLifeLTDGame(Game):
             max_cost = max(max_cost, item.cost)
         # Duplicate items based on their costs, cheaper items appear more frequently
         cost_diff: float = max_cost - min_cost
-        region: int = self.archipelago_options.tomodachi_life_region.value
+        region: int = (
+            self.archipelago_options.tomodachi_life_living_the_dream_region.value
+        )
         if cost_diff == 0:
             return [
                 (
