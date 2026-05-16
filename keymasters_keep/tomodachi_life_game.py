@@ -18,6 +18,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from functools import cached_property
 from Options import (  # pyright: ignore[reportMissingImports]
+    DefaultOnToggle,
     Choice,
     OptionCounter,
     OptionList,
@@ -89,6 +90,14 @@ class TomodachiLifeSpecialCharacters(Toggle):
     display_name: str = "Tomodachi Life Special Characters"
 
 
+class TomodachiLifeSkipLockedItems(DefaultOnToggle):
+    """
+    Whether Tomodachi Life objectives involving items should include a notice that allows them to be skipped if their items are not unlocked or owned by the player, depending on the item type.
+    """
+
+    display_name: str = "Tomodachi Life Skip Locked Items"
+
+
 class TomodachiLifeTrash(Toggle):
     """
     Whether to allow trash items (e.g. Mouldy bread) to appear as part of Tomodachi Life objectives.
@@ -121,6 +130,7 @@ class TomodachiLifeArchipelagoOptions:
     tomodachi_life_region: TomodachiLifeRegion
     tomodachi_life_language: TomodachiLifeLanguage
     tomodachi_life_special_characters: TomodachiLifeSpecialCharacters
+    tomodachi_life_skip_locked_items: TomodachiLifeSkipLockedItems
     tomodachi_life_trash: TomodachiLifeTrash
     tomodachi_life_male_miis: TomodachiLifeMaleMiis
     tomodachi_life_female_miis: TomodachiLifeFemaleMiis
@@ -3195,35 +3205,35 @@ class TomodachiLifeGame(Game):
         factor: int = 100
         objectives: list[GameObjectiveTemplate] = [
             GameObjectiveTemplate(
-                label="Feed FOOD to any Mii",
+                label=f"Feed FOOD{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''} to any Mii",
                 data={"FOOD": (self.foods, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_food"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Give any Mii the INTERIOR interior",
+                label=f"Give any Mii the INTERIOR interior{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                 data={"INTERIOR": (self.interiors, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_interior"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Dress any Mii in CLOTHES",
+                label=f"Dress any Mii in CLOTHES{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                 data={"CLOTHES": (self.clothes, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_clothes"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Gift GIFT to any Mii",
+                label=f"Gift GIFT{' if owned' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''} to any Mii",
                 data={"GIFT": (self.gifts, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
                 weight=weights["any_mii_gift"] * factor,
             ),
             GameObjectiveTemplate(
-                label="Give any Mii the TREASURE treasure",
+                label=f"Give any Mii the TREASURE treasure{' if owned' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                 data={"TREASURE": (self.treasures, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
@@ -3286,35 +3296,35 @@ class TomodachiLifeGame(Game):
             objectives.extend(
                 [
                     GameObjectiveTemplate(
-                        label="Feed FOOD to MALE",
+                        label=f"Feed FOOD{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''} to MALE",
                         data={"FOOD": (self.foods, 1), "MALE": get_male_data()},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=get_male_weight("named_mii_food"),
                     ),
                     GameObjectiveTemplate(
-                        label="Give MALE the INTERIOR interior",
+                        label=f"Give MALE the INTERIOR interior{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                         data={"MALE": get_male_data(), "INTERIOR": (self.interiors, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=get_male_weight("named_mii_interior"),
                     ),
                     GameObjectiveTemplate(
-                        label="Dress MALE in CLOTHES",
+                        label=f"Dress MALE in CLOTHES{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                         data={"MALE": get_male_data(), "CLOTHES": (self.clothes, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=get_male_weight("named_mii_clothes"),
                     ),
                     GameObjectiveTemplate(
-                        label="Gift GIFT to MALE",
+                        label=f"Gift GIFT{' if owned' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''} to MALE",
                         data={"GIFT": (self.gifts, 1), "MALE": get_male_data()},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=get_male_weight("named_mii_gift"),
                     ),
                     GameObjectiveTemplate(
-                        label="Give MALE the TREASURE treasure",
+                        label=f"Give MALE the TREASURE treasure{' if owned' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                         data={"MALE": get_male_data(), "TREASURE": (self.treasures, 1)},
                         is_time_consuming=False,
                         is_difficult=False,
@@ -3357,14 +3367,14 @@ class TomodachiLifeGame(Game):
             objectives.extend(
                 [
                     GameObjectiveTemplate(
-                        label="Feed FOOD to FEMALE",
+                        label=f"Feed FOOD{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''} to FEMALE",
                         data={"FOOD": (self.foods, 1), "FEMALE": get_female_data()},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=get_female_weight("named_mii_food"),
                     ),
                     GameObjectiveTemplate(
-                        label="Give FEMALE the INTERIOR interior",
+                        label=f"Give FEMALE the INTERIOR interior{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                         data={
                             "FEMALE": get_female_data(),
                             "INTERIOR": (self.interiors, 1),
@@ -3374,7 +3384,7 @@ class TomodachiLifeGame(Game):
                         weight=get_female_weight("named_mii_interior"),
                     ),
                     GameObjectiveTemplate(
-                        label="Dress FEMALE in CLOTHES",
+                        label=f"Dress FEMALE in CLOTHES{' if unlocked' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                         data={
                             "FEMALE": get_female_data(),
                             "CLOTHES": (self.clothes, 1),
@@ -3384,14 +3394,14 @@ class TomodachiLifeGame(Game):
                         weight=get_female_weight("named_mii_clothes"),
                     ),
                     GameObjectiveTemplate(
-                        label="Gift GIFT to FEMALE",
+                        label=f"Gift GIFT{' if owned' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''} to FEMALE",
                         data={"GIFT": (self.gifts, 1), "FEMALE": get_female_data()},
                         is_time_consuming=False,
                         is_difficult=False,
                         weight=get_female_weight("named_mii_gift"),
                     ),
                     GameObjectiveTemplate(
-                        label="Give FEMALE the TREASURE treasure",
+                        label=f"Give FEMALE the TREASURE treasure{' if owned' if self.archipelago_options.tomodachi_life_skip_locked_items.value else ''}",
                         data={
                             "FEMALE": get_female_data(),
                             "TREASURE": (self.treasures, 1),
