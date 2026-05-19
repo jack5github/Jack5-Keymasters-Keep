@@ -8,6 +8,7 @@ This repository contains Jack5's area and trial definitions of various games, ma
 2. Add the [Keymaster's Keep `.apworld` file](https://github.com/silasary/Archipelago/releases?q=keymaster%27s&expanded=true) into Archipelago's `worlds/` folder.
 3. Run the Archipelago Launcher. A new `keymasters_keep/` folder will be created.
 4. Download the `.py` files in [this repository's `keymasters_keep/` folder](https://github.com/jack5github/Jack5-Keymasters-Keep/tree/main/keymasters_keep) for the games you wish to add to the game pool, and place them into the `keymasters_keep/` folder.
+	- *You do not need the files in the `scripts/` folder.*
 5. Restart the Archipelago Launcher and open 'Generate Template Options'. The `Players/Templates/Keymaster's Keep.yaml` file will now contain the customisable settings for each implementation installed.
 
 ## Included Games
