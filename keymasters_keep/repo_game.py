@@ -19,8 +19,6 @@ from ..game_objective_template import (  # pyright: ignore[reportMissingImports]
     GameObjectiveTemplate,
 )
 
-# TODO: Update this implementation to support the cosmetics/magic update, which releases on May 7
-
 
 class RepoWeights(OptionCounter):
     """
@@ -170,6 +168,14 @@ class RepoGame(Game):
             "Zero Gravity Orb",
             "Duck Bucket",
             "Phase Bridge",
+            "Roll Staff",
+            "Zero Gravity Staff",
+            "Void Staff",
+            "Semibot Walkies",
+            "Scout",
+            "Hauler",
+            "Defibro",
+            "Leaf Blower",
         ]
 
     @staticmethod
@@ -357,36 +363,56 @@ class RepoGame(Game):
     @staticmethod
     def bonus_objectives() -> list[str]:
         return [
+            "Apply 5 upgrades onto yourself",
             "Attract a monster away from fellow semibots",
-            "Become King of the Losers",
+            "Be on C.A.R.T.-pushing duty",
+            "Be on valuable-hunting duty",
+            "Beat a level with a Common cosmetic box extracted",
+            "Beat a level with a Rare cosmetic box extracted",
+            "Beat a level with an Uncommon cosmetic box extracted",
+            "Become King of the Losers after a fight to the death",
+            "Become King of the Losers after a vehicle race",
             "Break a valuable",
+            "Change your outfit",
+            "Deposit a Tax Token",
+            "Destroy a vehicle",
             "Die to a monster",
             "Die to an extraction point",
+            "Die to another semibot",
+            "Die to the Shopkeeper",
             "Discover an extraction point",
+            "Distract a monster to help another semibot",
             "Dive roll into another semibot",
-            "Dunk another semibot in a Service Station toilet",
+            "Drown and die",
+            "Dunk another semibot in a toilet",
+            "Enter a secret room in a service station",
             "Fall to your death",
             "Finish a singleplayer game",
             "Force heal another semibot",
+            "Haul or push a monster into a pit",
             "Heal yourself",
             "Hide from a monster",
             "Join a public game",
-            "Kill another semibot in the Service Station",
-            "Kill another semibot with the Baseball Bat",
+            "Kill a monster by hitting it hard against a wall",
+            "Kill a monster with a vehicle",
+            "Kill a monster with a weapon",
+            "Kill another semibot in a level",
+            "Kill another semibot in a service station",
             "Knock down another semibot with a weapon",
             "Knock down another semibot with a valuable",
+            "Lose a valuable down a pit",
+            "Lose a weapon down a pit",
             "Play the tutorial",
             "Play with 3 other semibots",
+            "Put a valuable in an extraction point, passing the C.A.R.T.",
             "Ragequit",
-            "Reach the attic in the Service Station",
             "Rescue a dead semibot using an extraction point",
             "Return to the vehicle to charge a weapon",
             "Run from a monster",
             "Sneak past a monster",
-            "Survive until the Crescent Moon",
-            "Take on C.A.R.T.-pushing duty",
+            "Survive until the Crescent Moon in singleplayer",
+            "Survive until the Crescent Moon in multiplayer",
             "Turn on Item Unequip Auto Hold gameplay setting",
-            "Upgrade yourself",
         ]
 
     @staticmethod
@@ -394,12 +420,13 @@ class RepoGame(Game):
         return [
             "No charging weapons mid-location unless required",
             "No hiding unless required",
+            "No purchasing anything expect Defibro if no-one has one",
             "No running unless required",
             "No upgrades unless required",
             "No waiting for more cash if extraction is possible",
             "Objectives cannot be completed until after the Crescent Moon",
-            "Ragequit if a valuable is broken",
-            "Ragequit if you die",
+            "Restart your run if a valuable is broken",
+            "Restart your run if you die",
         ]
 
     def game_objective_templates(self) -> list[GameObjectiveTemplate]:
