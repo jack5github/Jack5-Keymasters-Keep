@@ -1139,7 +1139,7 @@ class DominionGame(Game):
                 data={"CARD": (self.all_playable, 1)},
                 is_time_consuming=False,
                 is_difficult=False,
-                weight=int(weights["play_card"] * factor),
+                weight=weights["play_card"] * factor,
             ),
             GameObjectiveTemplate(
                 label="Win with CARD",
@@ -1147,7 +1147,7 @@ class DominionGame(Game):
                 is_time_consuming=False,
                 # Difficult due to the unlikelihood of a card appearing and being able to win with it
                 is_difficult=True,
-                weight=int(weights["win_with_card"] * factor),
+                weight=weights["win_with_card"] * factor,
             ),
             GameObjectiveTemplate(
                 label="Win against NUMBER DIFFICULTY AI",
