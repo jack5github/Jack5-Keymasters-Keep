@@ -1,13 +1,15 @@
 """
 A Keymaster's Keep implementation of games exported from Backloggery, created by Jack5. The following objective types are included:
 
-- Update (make progress in, play, beat, complete, unpause, replay) specific games
-- Write reviews for specific unreviewed games
+- Play (for the first time) and make progress in specific games (difficult)
+- Beat and complete specific games (difficult and time consuming)
+- Unpause and replay specific games (difficult)
+- Rate and write reviews for specific unreviewed games
 - Bonus objectives
 
 As with other Jack5-made implementations, the weights for each kind of objective can be customised using the `backloggery_weights` YAML option.
 
-This implementation works by reading data from Backloggery's CSV exports, which can be accessed by visiting https://backloggery.com/!/settings/data. Only the 'Game Library' and 'Reviews' exports are supported. `backloggery_demo_data` is enabled for implementation demonstration purposes, but will be disabled in normal use.
+This is a more complex and intelligent alternative to the default **[Game Backlog (META)](https://silasary.github.io/kmk_tools/games/game_backlog_game/)** implementation. To get started, visit https://backloggery.com/!/settings/data and download the 'Game Library' and 'Reviews' (optional) CSV exports, then place them into the `keymasters_keep/backloggery/` folder. If renaming them, be sure to update the `backloggery_library_path` and `backloggery_reviews_path` YAML options. (`backloggery_demo_data` is enabled for implementation demonstration purposes, but is disabled in normal use.)
 """
 
 from __future__ import annotations
@@ -41,6 +43,7 @@ try:  # Archipelago imports are done here to support running this script as main
             "complete_beaten_game": 1,
             "play_paused_game": 1,
             "replay_game": 1,
+            "rate_game": 1,
             "review_game": 1,
             "bonus": 1,
         }
@@ -52,8 +55,6 @@ try:  # Archipelago imports are done here to support running this script as main
 
         display_name: str = "Backloggery Library Path"
         default: str = LIBRARY_DEFAULT_PATH
-
-    # TODO: Add option to specify difficult and time consuming games
 
     class BackloggeryReviewsPath(Options.FreeText):
         """
@@ -138,6 +139,7 @@ class BackloggeryGame(Game):
         super().__init__(*args, **kwargs)
         self._games_cache: list[BackloggeryLibraryGame] | None = None
         self._reviews_cache: list[BackloggeryReview] | None = None
+        self._difficult_games_cache: list[str] | None = None
 
     def _read_csv(self, pattern: str, required: bool = False) -> list[dict[str, Any]]:
         """
@@ -641,6 +643,14 @@ Highly recommended.
         self._reviews_cache = reviews
         return reviews
 
+    def _difficult_games(self) -> list[str]:
+        self._difficult_games_cache = [
+            r["Unique_Game_ID"]
+            for r in self._reviews()
+            if r["Difficulty"] in ["Too Hard", "Unfair"]
+        ]
+        return self._difficult_games_cache
+
     def _get_game_title(
         self, game: BackloggeryLibraryGame, title_only: bool = False
     ) -> str:
@@ -664,16 +674,20 @@ Highly recommended.
     def _game_is_owned(self, game: BackloggeryLibraryGame) -> bool:
         return game["Ownership"] not in ["Wishlist", "Played It", "Formerly Owned"]
 
-    def games_to_play(self) -> list[BackloggeryLibraryGame]:
+    def _game_is_difficult(self, game: BackloggeryLibraryGame, difficult: bool) -> bool:
+        return (game["Unique_Game_ID"] in self._difficult_games()) == difficult
+
+    def games_to_play(self, difficult: bool) -> list[BackloggeryLibraryGame]:
         return [
             g
             for g in self._games()
             if g["Status"] == "Unplayed"
             and self._game_is_active(g)
             and self._game_is_owned(g)
+            and self._game_is_difficult(g, difficult)
         ]
 
-    def games_to_progress_in(self) -> list[BackloggeryLibraryGame]:
+    def games_to_progress_in(self, difficult: bool) -> list[BackloggeryLibraryGame]:
         return [
             g
             for g in self._games()
@@ -681,47 +695,69 @@ Highly recommended.
             if g["Status"] not in ["Unplayed", "Completed", "None"]
             and self._game_is_active(g)
             and self._game_is_owned(g)
+            and self._game_is_difficult(g, difficult)
         ]
 
-    def games_to_beat(self) -> list[BackloggeryLibraryGame]:
+    def games_to_beat(self, difficult: bool) -> list[BackloggeryLibraryGame]:
         return [
             g
             for g in self._games()
             if g["Status"] == "Unfinished"
             and self._game_is_active(g)
             and self._game_is_owned(g)
+            and self._game_is_difficult(g, difficult)
         ]
 
-    def games_to_complete(self) -> list[BackloggeryLibraryGame]:
+    def games_to_complete(self, difficult: bool) -> list[BackloggeryLibraryGame]:
         return [
             g
             for g in self._games()
             if g["Status"] == "Beaten"
             and self._game_is_active(g)
             and self._game_is_owned(g)
+            and self._game_is_difficult(g, difficult)
         ]
 
-    def games_to_unpause(self) -> list[BackloggeryLibraryGame]:
+    def games_to_unpause(self, difficult: bool) -> list[BackloggeryLibraryGame]:
         return [
             g
             for g in self._games()
-            if g["Priority"] == "Paused" and self._game_is_owned(g)
+            if g["Priority"] == "Paused"
+            and self._game_is_owned(g)
+            and self._game_is_difficult(g, difficult)
         ]
 
-    def games_to_replay(self) -> list[BackloggeryLibraryGame]:
+    def games_to_replay(self, difficult: bool) -> list[BackloggeryLibraryGame]:
         return [
             g
             for g in self._games()
-            if g["Priority"] == "Replay" and self._game_is_owned(g)
+            if g["Priority"] == "Replay"
+            and self._game_is_owned(g)
+            and self._game_is_difficult(g, difficult)
+        ]
+
+    def games_to_rate(self) -> list[BackloggeryLibraryGame]:
+        games: list[BackloggeryLibraryGame] = self._games()
+        unrated_ids: list[str] = [
+            r["Unique_Game_ID"]
+            for r in self._reviews()
+            if r["Rating"] == "" or r["Difficulty"] == ""
+        ]
+        return [
+            g
+            for g in games
+            if g["Unique_Game_ID"] in unrated_ids and self._game_is_owned(g)
         ]
 
     def games_to_review(self) -> list[BackloggeryLibraryGame]:
         games: list[BackloggeryLibraryGame] = self._games()
-        reviewed_ids: list[str] = [r["Unique_Game_ID"] for r in self._reviews()]
+        unreviewed_ids: list[str] = [
+            r["Unique_Game_ID"] for r in self._reviews() if r["Review"] == ""
+        ]
         return [
             g
             for g in games
-            if g["Unique_Game_ID"] not in reviewed_ids and self._game_is_owned(g)
+            if g["Unique_Game_ID"] in unreviewed_ids and self._game_is_owned(g)
         ]
 
     def games_str(self, games: list[BackloggeryLibraryGame]) -> list[str]:
@@ -763,24 +799,93 @@ Highly recommended.
         factor: int = 100
         templates: list[GameObjectiveTemplate] = []
         for objective in [
-            ("Play GAME", self.games_to_play(), "play_unplayed_game"),
-            ("Make progress in GAME", self.games_to_progress_in(), "progress_in_game"),
-            ("Beat GAME", self.games_to_beat(), "beat_unfinished_game"),
-            ("Complete GAME", self.games_to_complete(), "complete_beaten_game"),
+            (
+                "Play GAME for the first time",
+                self.games_to_play,
+                "play_unplayed_game",
+                True,
+                False,
+            ),
+            (
+                "Make progress in GAME",
+                self.games_to_progress_in,
+                "progress_in_game",
+                True,
+                False,
+            ),
+            ("Beat GAME", self.games_to_beat, "beat_unfinished_game", True, True),
+            (
+                "Complete GAME",
+                self.games_to_complete,
+                "complete_beaten_game",
+                True,
+                True,
+            ),
             (
                 "Unpause and return to GAME",
-                self.games_to_unpause(),
+                self.games_to_unpause,
                 "unpause_paused_game",
+                True,
+                False,
             ),
-            ("Start replaying GAME", self.games_to_replay(), "replay_game"),
-            ("Write a review for GAME", self.games_to_review(), "review_game"),
+            ("Start replaying GAME", self.games_to_replay, "replay_game", True, False),
+            (
+                "Set review ratings for GAME",
+                self.games_to_rate,
+                "rate_game",
+                False,
+                False,
+            ),
+            (
+                "Write a review for GAME",
+                self.games_to_review,
+                "review_game",
+                False,
+                False,
+            ),
         ]:
-            if len(objective[1]) > 0:
+            if objective[3]:  # May be difficult
+                games_base: list[BackloggeryLibraryGame] = objective[1](False)
+                games_difficult: list[BackloggeryLibraryGame] = objective[1](True)
+                if len(games_base) + len(games_difficult) == 0:
+                    continue
+                base_ratio: float = len(games_base) / (
+                    len(games_base) + len(games_difficult)
+                )
+                difficult_ratio: float = 1 - base_ratio
+                if len(games_base) != 0:
+                    templates.append(
+                        GameObjectiveTemplate(
+                            label=objective[0],
+                            data={"GAME": (lambda g=games_base: self.games_str(g), 1)},
+                            is_time_consuming=objective[4],
+                            is_difficult=False,
+                            weight=int(weights[objective[2]] * factor * base_ratio),
+                        )
+                    )
+                if len(games_difficult) != 0:
+                    templates.append(
+                        GameObjectiveTemplate(
+                            label=objective[0],
+                            data={
+                                "GAME": (lambda g=games_difficult: self.games_str(g), 1)
+                            },
+                            is_time_consuming=objective[4],
+                            is_difficult=True,
+                            weight=int(
+                                weights[objective[2]] * factor * difficult_ratio
+                            ),
+                        )
+                    )
+            else:
+                games: list[BackloggeryLibraryGame] = objective[1]()
+                if len(games) == 0:
+                    continue
                 templates.append(
                     GameObjectiveTemplate(
                         label=objective[0],
-                        data={"GAME": (lambda: self.games_str(objective[1]), 1)},
-                        is_time_consuming=False,
+                        data={"GAME": (lambda g=games: self.games_str(g), 1)},
+                        is_time_consuming=objective[4],
                         is_difficult=False,
                         weight=weights[objective[2]] * factor,
                     )
